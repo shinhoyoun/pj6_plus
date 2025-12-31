@@ -15,8 +15,9 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-    @Column(name = "store_id", nullable = false)
-    private Long storeId;
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store storeId;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

@@ -20,7 +20,8 @@ public class Coupon {
     @Column(name = "coupon_id")
     private Long id;
 
-    @Column(name = "store_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
     private String couponName;
