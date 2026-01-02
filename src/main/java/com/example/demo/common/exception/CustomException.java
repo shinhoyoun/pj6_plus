@@ -1,17 +1,15 @@
 package com.example.demo.common.exception;
 
-import com.example.demo.common.enums.ExceptionCode;
+import com.example.demo.common.enums.ErrorMessage;
 import lombok.Getter;
 
 @Getter
 public class CustomException extends RuntimeException {
 
-    private final ExceptionCode exceptionCode;
+    private final ErrorMessage errorMessage;
 
-    public CustomException(ExceptionCode exceptionCode) {
-
-        super(exceptionCode.getMessage());
-
-        this.exceptionCode = exceptionCode;
+    public CustomException(ErrorMessage errorMessage) {
+        super(errorMessage.getMessage());
+        this.errorMessage = errorMessage;
     }
 }

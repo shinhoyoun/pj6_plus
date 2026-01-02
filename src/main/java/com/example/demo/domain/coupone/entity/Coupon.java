@@ -1,5 +1,6 @@
-package com.example.demo.common.entity;
+package com.example.demo.domain.coupone.entity;
 
+import com.example.demo.domain.store.entity.Store;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

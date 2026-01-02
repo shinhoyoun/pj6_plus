@@ -1,10 +1,13 @@
 package com.example.demo.common.enums;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public enum ExceptionCode {
+@RequiredArgsConstructor
+public enum ErrorMessage {
 
     // user
     EXISTS_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
@@ -21,16 +24,7 @@ public enum ExceptionCode {
 
 
     // coupon
-
-
-
     ;
-
     private final HttpStatus status;
     private final String message;
-
-    ExceptionCode(HttpStatus status, String message) {
-        this.status = status;
-        this.message = message;
-    }
 }
