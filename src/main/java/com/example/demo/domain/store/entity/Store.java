@@ -4,6 +4,7 @@ import com.example.demo.common.entity.BaseEntity;
 import com.example.demo.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class Store extends BaseEntity {
     private String mallName; // 쇼핑몰명
 
     @Column(name = "domain_name")
+    @Length(max = 10000)
     private String domainName; // 도메인명
 
     @Column(name = "phone_number")
@@ -121,8 +123,8 @@ public class Store extends BaseEntity {
     @Column(name = "monitoring_date")
     private LocalDate monitoringDate; // 모니터링날짜
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "review_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
     private Review review;
 
 
