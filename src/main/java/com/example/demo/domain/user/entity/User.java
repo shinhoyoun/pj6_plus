@@ -19,7 +19,7 @@ public class User {
     @Column(name = "username", unique = true)
     private String username;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "useremail", unique = true)
     private String email;
 
     @Column(name = "password", nullable = false)
@@ -30,4 +30,23 @@ public class User {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
+    //삭제하기
+    public User(String foundName) {
+    }
+
+    public String getName() {
+        return "";
+    }
+
+    public void updateUser(String foundName) {
+    }
+
+    public User updateMember(String foundName) {
+        return null;
+    }
+
+    public void softDeleted() {
+
+    }
 }
