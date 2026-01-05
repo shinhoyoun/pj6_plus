@@ -1,7 +1,7 @@
 package com.example.demo.common.auth.service;
 
-import com.example.demo.common.auth.dto.JwtUserPayload;
-import com.example.demo.common.auth.dto.UserAuthInfo;
+import com.example.demo.common.auth.dto.response.JwtUserPayload;
+import com.example.demo.common.auth.dto.response.UserAuthInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -30,8 +30,13 @@ public class JwtService {
     private String secret;
     private SecretKey key;
 
+    /**
+     * 빈 초기화 메서드
+     */
     @PostConstruct
-        //어플리케이션 실행 시 가장 먼저 실행하게 하는 어노테이션
+    //어플리케이션 실행 시 가장 먼저 실행하게 하는 어노테이션
+
+    //256 으로 맞추기
     void init() {
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
@@ -55,7 +60,7 @@ public class JwtService {
                 .expiration(exp)//만료시간
                 .issuedAt(now)//발급시간
                 .claim("email", userEmail)
-                .signWith(key)
+                .signWith(key, Jwts.SIG.HS256) //타입 정하는 것
                 .compact();
         return jws;
     }
@@ -73,12 +78,33 @@ public class JwtService {
 
             Long userId = Long.valueOf(claims.getSubject());
             String email = claims.get("email", String.class);
-
-            UserAuthInfo userAuthInfo = new UserAuthInfo(userId, email);
-            return userAuthInfo;
+            return new UserAuthInfo(userId, email);
 
         } catch (JwtException ex) {
             throw ex;
         }
     }
+
+    /**
+     * 데이터 북호화
+     * @param token
+     * @return
+     */
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    public Long extractUserId(String token) {
+        return extractAllClaims(token).get("userId", Long.class);
+    }
+
+    public String extractUsername(String token) {
+        return extractAllClaims(token).get("username",String.class);
+    }
+
 }

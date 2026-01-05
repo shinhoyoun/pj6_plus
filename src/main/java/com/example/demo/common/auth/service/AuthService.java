@@ -1,11 +1,13 @@
 package com.example.demo.common.auth.service;
 
-import com.example.demo.common.auth.dto.JwtUserPayload;
-import com.example.demo.common.auth.dto.request.LoginRequestDto;
-import com.example.demo.common.auth.dto.response.LoginResponseDto;
+import com.example.demo.common.auth.dto.response.JwtUserPayload;
+import com.example.demo.common.auth.dto.request.AuthLoginRequestDto;
+import com.example.demo.common.auth.dto.response.AuthLoginResponseDto;
 import com.example.demo.common.auth.repository.AuthRepository;
 import com.example.demo.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +19,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     /**
      * 로그인 처리
      *
      * @return
      */
-    public LoginResponseDto login(LoginRequestDto requestDto) {
+    public AuthLoginResponseDto login(AuthLoginRequestDto requestDto) {
         //1. 데이터준비
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
@@ -43,7 +46,7 @@ public class AuthService {
         String encodedJwt = jwtService.createToken(jwtUserPayload);
 
         //5. responseDto 반환
-        LoginResponseDto responseDto = new LoginResponseDto(encodedJwt);
+        AuthLoginResponseDto responseDto = new AuthLoginResponseDto(encodedJwt);
         return responseDto;
     }
 }
