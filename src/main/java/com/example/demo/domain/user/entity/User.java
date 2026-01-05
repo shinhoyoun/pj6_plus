@@ -22,24 +22,24 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     private String role;
 
-    @Column(name = "is_deleted")
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
     @Column(name = "deleted_at")
