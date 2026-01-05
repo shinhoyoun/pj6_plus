@@ -1,4 +1,4 @@
-package com.example.demo.common.auth.dto;
+package com.example.demo.common.auth.dto.response;
 
 import lombok.Getter;
 

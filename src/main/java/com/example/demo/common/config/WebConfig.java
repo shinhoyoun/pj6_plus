@@ -17,7 +17,6 @@ public class WebConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
 // Create an encoder with strength 16
 //    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
