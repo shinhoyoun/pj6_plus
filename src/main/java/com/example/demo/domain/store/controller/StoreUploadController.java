@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -36,6 +33,26 @@ public class StoreUploadController {
         //3.엔티티를 통해서 읽을 수 있게 만들기
 
     }
+
+    /**
+     * API 호출
+     */
+    //1.포스트맨으로 url 호출 해보기
+    @GetMapping("/collection-openapi")
+    public ResponseEntity<String> callStoreApi(
+            @RequestParam(value = "start", defaultValue = "1") int start,
+            @RequestParam(value = "end", defaultValue = "100") int end
+    ){
+        try {
+            storeUploadService.saveAllStore(start, end);
+            return ResponseEntity.ok("업로드 완료");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
+
+    }
+
 
 
 }

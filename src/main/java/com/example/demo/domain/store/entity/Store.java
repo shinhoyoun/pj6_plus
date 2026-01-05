@@ -7,7 +7,6 @@ import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "stores")
@@ -30,7 +29,6 @@ public class Store extends BaseEntity {
     private String mallName; // 쇼핑몰명
 
     @Column(name = "domain_name")
-    @Length(max = 10000)
     private String domainName; // 도메인명
 
     @Column(name = "phone_number")
@@ -123,10 +121,12 @@ public class Store extends BaseEntity {
     @Column(name = "monitoring_date")
     private LocalDate monitoringDate; // 모니터링날짜
 
+
+
+
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
-
-
-
 }
