@@ -2,6 +2,8 @@ package com.example.demo.domain.store.service;
 
 import com.example.demo.domain.store.entity.SeoulShop;
 import com.example.demo.domain.store.entity.Store;
+import com.example.demo.domain.store.repository.SeoulShopRepository;
+import com.example.demo.domain.store.repository.StoreRepository;
 import com.opencsv.CSVReader;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
