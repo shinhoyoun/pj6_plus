@@ -91,7 +91,7 @@ public class UserService {
             throw new IllegalStateException("이미 사용중인 이메일입니다.");
         }
 
-        boolean exitsUsername = userRepository.existsByUsername(request.getName());
+        boolean exitsUsername = userRepository.existsByUsername(request.getUsername());
 
         if (exitsUsername) {
             throw new IllegalArgumentException("이미 사용중인 사용자명입니다.");
