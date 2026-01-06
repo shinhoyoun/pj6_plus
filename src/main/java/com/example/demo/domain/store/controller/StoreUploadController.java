@@ -20,7 +20,7 @@ public class StoreUploadController {
     /**
      * 파일 업로드
      */
-    @PostMapping("/uploadForm")
+    @PostMapping("/collerction")
     public ResponseEntity<String> uploadFormPostApi(@RequestPart("file") MultipartFile file) {
         try {
             storeUploadService.uploadCsvFile(file);

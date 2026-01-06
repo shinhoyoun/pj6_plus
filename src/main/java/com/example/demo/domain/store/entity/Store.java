@@ -4,7 +4,6 @@ import com.example.demo.common.entity.BaseEntity;
 import com.example.demo.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
 
@@ -18,7 +17,7 @@ public class Store extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "store_id", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     // 1. 기본 정보
@@ -28,7 +27,7 @@ public class Store extends BaseEntity {
     @Column(name = "mall_name")
     private String mallName; // 쇼핑몰명
 
-    @Column(name = "domain_name")
+    @Column(name = "domain_name",length = 10000)
     private String domainName; // 도메인명
 
     @Column(name = "phone_number")
