@@ -18,9 +18,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends BaseEntity {
 
     @Id
+    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -62,3 +63,5 @@ public class User {
     public void softDelete() {
         this.deletedAt = LocalDateTime.now();
     }
+
+}
