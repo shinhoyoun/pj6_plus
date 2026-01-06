@@ -19,8 +19,8 @@ public class UserCouponService {
     private final UserRepository userRepository;
 
     @Transactional
-    public IssuedUserCouponResponseDto issuedCoupon(long couponId, long userId) {
-        Coupon foundCoupon = couponRepository.findById(couponId).orElseThrow(
+    public IssuedUserCouponResponseDto issuedCouponWithLock(long couponId, long userId) {
+        Coupon foundCoupon = couponRepository.findByIdForLOCK(couponId).orElseThrow(
                 () -> new RuntimeException("존재하지 않은 쿠폰입니다.")
         );
 
@@ -40,7 +40,7 @@ public class UserCouponService {
 
         foundCoupon.issuedCoupon();
 
-        foundCoupon.expiredCoupon();
+        foundCoupon.notIssuedCoupon();
 
         long userCouponId = newUserCoupon.getId();
 
