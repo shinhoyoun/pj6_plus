@@ -23,12 +23,12 @@ public class ReviewController {
 
 
     //생성
-    @PostMapping("/{loginUserId}")
+    @PostMapping("/{loginUserId}/{storeId}")
     public ResponseEntity<CommonResponse<ReviewCreateResponseDto>> reviewCreateApi(
-//            @PathVariable Long storeId,
+            @PathVariable Long storeId,
             @PathVariable ("loginUserId") Long loginUserId, // 삭제 예정
             @RequestBody ReviewCreateRequestDto requestDto) {
-        ReviewCreateResponseDto responseDto = reviewService.createReview( loginUserId, requestDto);
+        ReviewCreateResponseDto responseDto = reviewService.createReview(storeId ,loginUserId, requestDto);
 
         CommonResponse<ReviewCreateResponseDto> commonResponse = new CommonResponse<>(true, "리뷰가 생성 됐습니다", responseDto);
         ResponseEntity<CommonResponse<ReviewCreateResponseDto>> response = new ResponseEntity<>(commonResponse, HttpStatus.CREATED);

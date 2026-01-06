@@ -1,6 +1,5 @@
 package com.example.demo.domain.review.service;
 
-//import com.example.demo.common.auth.filter.JwtFilter;
 import com.example.demo.common.response.CommonResponse;
 import com.example.demo.domain.review.dto.request.ReviewCreateRequestDto;
 import com.example.demo.domain.review.dto.response.ReviewCreateResponseDto;
@@ -9,6 +8,10 @@ import com.example.demo.domain.review.dto.response.ReviewUpdateResponseDto;
 import com.example.demo.domain.review.entity.Review;
 import com.example.demo.domain.review.repository.ReviewRepository;
 
+import com.example.demo.domain.store.entity.SeoulShop;
+import com.example.demo.domain.store.entity.Store;
+
+import com.example.demo.domain.store.service.SeoulShopRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 //    private final JwtFilter jwtFilter;
     private final UserRepository userRepository;
+//    private final Store;
 
     /**
      * 생성 기능
@@ -33,15 +37,15 @@ public class ReviewService {
      * @return
      */
     @Transactional
-    public ReviewCreateResponseDto createReview(Long userId ,ReviewCreateRequestDto requestDto) {
+    public ReviewCreateResponseDto createReview(Long id,Long storeId ,ReviewCreateRequestDto requestDto) {
 
 
         //1. 스토어 아이디 조회
-//        Store store = reviewRepository.findByIdAndIsDeletedFalse(storeId)
+//        Store store = Repository.findById(storeId)
 //                .orElseThrow(() -> new RuntimeException("스토아 조회할 수 없습니다."));
 
         //2. 유저 아이디 조회
-        User user = userRepository.findByIdAndIsDeletedFalse(userId)
+        User user = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new RuntimeException("유저 조회할 수 없습니다."));
 
 
