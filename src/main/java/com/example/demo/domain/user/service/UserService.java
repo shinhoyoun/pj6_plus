@@ -1,7 +1,7 @@
 package com.example.demo.domain.user.service;
 
 import com.example.demo.common.response.CommonResponse;
-import com.example.demo.common.util.PasswordEncoder;
+
 import com.example.demo.domain.user.dto.request.UserCreateRequest;
 import com.example.demo.domain.user.dto.request.UserUpdateRequest;
 import com.example.demo.domain.user.dto.response.UserCreateResponse;
@@ -13,6 +13,7 @@ import com.example.demo.domain.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.example.demo.common.util.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -36,7 +38,7 @@ public class AuthController {
         //비지니스 로직
         AuthLoginResponseDto responseDto = authService.login(requestDto);
 
-        ApiResponse<AuthLoginResponseDto> apiResponse = new ApiResponse<>("success", 200, responseDto);
+        ApiResponse<AuthLoginResponseDto> apiResponse = new ApiResponse<>("success", 200, responseDto, LocalDateTime.now());
         ResponseEntity<ApiResponse<AuthLoginResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
         return response;
     }

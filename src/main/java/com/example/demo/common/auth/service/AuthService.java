@@ -4,11 +4,13 @@ import com.example.demo.common.auth.dto.response.JwtUserPayload;
 import com.example.demo.common.auth.dto.request.AuthLoginRequestDto;
 import com.example.demo.common.auth.dto.response.AuthLoginResponseDto;
 import com.example.demo.common.auth.repository.AuthRepository;
+import com.example.demo.common.util.PasswordEncoder;
 import com.example.demo.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
+
 import org.springframework.stereotype.Service;
 
 @Service
