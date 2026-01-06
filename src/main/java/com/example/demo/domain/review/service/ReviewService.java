@@ -11,7 +11,8 @@ import com.example.demo.domain.review.repository.ReviewRepository;
 import com.example.demo.domain.store.entity.SeoulShop;
 import com.example.demo.domain.store.entity.Store;
 
-import com.example.demo.domain.store.service.SeoulShopRepository;
+
+import com.example.demo.domain.store.repository.StoreRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 //    private final JwtFilter jwtFilter;
     private final UserRepository userRepository;
-//    private final Store;
+    //    private final Store;
+    private final StoreRepository storeRepository;
 
     /**
      * 생성 기능
@@ -41,8 +43,8 @@ public class ReviewService {
 
 
         //1. 스토어 아이디 조회
-//        Store store = Repository.findById(storeId)
-//                .orElseThrow(() -> new RuntimeException("스토아 조회할 수 없습니다."));
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new RuntimeException("스토아 조회할 수 없습니다."));
 
         //2. 유저 아이디 조회
         User user = userRepository.findByIdAndIsDeletedFalse(id)
@@ -54,7 +56,12 @@ public class ReviewService {
         String content = requestDto.getContent();
 
         //4. 엔티티생성
-        Review review = new Review(name,content);
+        Review review = Review.builder()
+                .store(store)
+                .user(user)
+                .name(name)
+                .content(content)
+                .build();
         //5. 저장
         Review save = reviewRepository.save(review);
 

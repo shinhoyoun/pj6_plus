@@ -18,10 +18,9 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-//    private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "store", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,8 +40,6 @@ public class Review extends BaseEntity {
         this.content = content;
         this.name = name;
     }
-
-
 
     public void update(String content) {
         this.content = content;

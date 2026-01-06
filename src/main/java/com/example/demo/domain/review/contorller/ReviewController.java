@@ -1,6 +1,7 @@
 package com.example.demo.domain.review.contorller;
 
 import com.example.demo.common.auth.dto.response.ApiResponse;
+import com.example.demo.common.auth.service.JwtService;
 import com.example.demo.common.response.CommonResponse;
 import com.example.demo.domain.review.dto.request.ReviewCreateRequestDto;
 import com.example.demo.domain.review.dto.response.ReviewCreateResponseDto;
@@ -20,13 +21,24 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
+    private final JwtService jwtService;
 
+    // ✅ 토큰 파싱 공용
+    private String resolveToken(String authorizationHeader) {
+        if (authorizationHeader == null || authorizationHeader.isBlank()) {
+            throw new RuntimeException("Authorization 헤더가 없습니다.");
+        }
+        if (!authorizationHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Bearer 토큰 형식이 아닙니다.");
+        }
+        return authorizationHeader.substring(7);
+    }
 
     //생성
     @PostMapping("/{loginUserId}/{storeId}")
     public ResponseEntity<CommonResponse<ReviewCreateResponseDto>> reviewCreateApi(
             @PathVariable Long storeId,
-            @PathVariable ("loginUserId") Long loginUserId, // 삭제 예정
+            @PathVariable ("loginUserId") Long loginUserId,
             @RequestBody ReviewCreateRequestDto requestDto) {
         ReviewCreateResponseDto responseDto = reviewService.createReview(storeId ,loginUserId, requestDto);
 
