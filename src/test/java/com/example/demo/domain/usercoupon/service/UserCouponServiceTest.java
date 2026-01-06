@@ -1,0 +1,123 @@
+package com.example.demo.domain.usercoupon.service;
+
+import com.example.demo.domain.coupon.entity.Coupon;
+import com.example.demo.domain.coupon.repository.CouponRepository;
+import com.example.demo.domain.user.entity.User;
+import com.example.demo.domain.user.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+@SpringBootTest
+class UserCouponServiceTest {
+
+    @Autowired
+    private UserCouponService userCouponService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private CouponRepository couponRepository;
+
+    private Throwable errorMessage;
+
+    @Test
+    @DisplayName("유저 200명의 동시성 이슈와 동시성 이슈에 대한 락 적용 후 100명의 유저에게만 쿠폰 발급")
+    public void userForLock_issuedOneCouponUsers_oneHundredIssuedCouponTest() throws InterruptedException {
+        // give
+        // 쿠폰 객체
+        Coupon coupon = new Coupon("text 쿠폰");
+
+        couponRepository.save(coupon);
+
+        // 200명의 유저 객체
+        List<User> users = IntStream.rangeClosed(1, 200)
+                .mapToObj(i -> userRepository.save(
+                        new User("user" + i, "user" + i, "test1111", "test")
+                ))
+                .toList();
+
+        // when
+        ExecutorService executorService = Executors.newFixedThreadPool(200);
+        CountDownLatch latch = new CountDownLatch(200);
+
+        for (User user : users) {
+            executorService.execute(() -> {
+                try {
+                    userCouponService.issuedCouponWithLock(coupon.getId(), user.getId());
+                } catch (RuntimeException exception) {
+                    throw new RuntimeException(exception.getMessage());
+                }
+                finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
+
+        // then
+        Coupon foundCoupon = couponRepository.findById(coupon.getId())
+                .orElseThrow(() -> new RuntimeException("coupon not found")
+                );
+        // 발급된 쿠폰 수
+        long issuedCouponCount = foundCoupon.getIssuedCouponCount();
+
+        // 유저 100만 쿠폰 발급
+        assertEquals(100, issuedCouponCount);
+    }
+
+
+    @Test
+    @DisplayName("유저 101명의 동시성 이슈와 동시성 이슈에 대한 비관적 락 적용 후 101명부터 쿠폰발급을 막는 예외발생")
+    public void userForLock_issuedOneCouponUsers_exceptionTest() throws InterruptedException{
+        // give
+        // 쿠폰 객체
+        Coupon coupon = new Coupon("text 쿠폰");
+
+        couponRepository.save(coupon);
+
+        // 100명의 유저 객체
+        List<User> users = IntStream.rangeClosed(1, 101)
+                .mapToObj(i -> userRepository.save(
+                        new User("user" + i, "user" + i, "test1111", "test")
+                ))
+                .toList();
+
+        // when
+        ExecutorService executorService = Executors.newFixedThreadPool(101);
+        CountDownLatch latch = new CountDownLatch(101);
+
+        for (User user : users) {
+            executorService.execute(() -> {
+                try {
+                    userCouponService.issuedCouponWithLock(coupon.getId(), user.getId());
+                } catch (RuntimeException exception) {
+                    errorMessage = exception;
+                }
+                finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
+
+        // then
+        // 101번째 쿠폰 발급 요청 예외 메시지
+        String notIssuedCoupon = errorMessage.getMessage();
+
+        assertEquals("더이상 발급되지 않는 쿠폰입니다", notIssuedCoupon);
+    }
+}
