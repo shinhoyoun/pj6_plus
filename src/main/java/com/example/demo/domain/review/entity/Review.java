@@ -37,9 +37,12 @@ public class Review extends BaseEntity {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Review(String content) {
+    public Review(String name, String content) {
         this.content = content;
+        this.name = name;
     }
+
+
 
     public void update(String content) {
         this.content = content;

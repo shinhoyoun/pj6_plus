@@ -1,20 +1,19 @@
 package com.example.demo.domain.review.contorller;
 
 import com.example.demo.common.auth.dto.response.ApiResponse;
+import com.example.demo.common.response.CommonResponse;
 import com.example.demo.domain.review.dto.request.ReviewCreateRequestDto;
 import com.example.demo.domain.review.dto.response.ReviewCreateResponseDto;
-import com.example.demo.domain.review.dto.response.ReviewPageResponseDto;
+import com.example.demo.domain.review.dto.response.ReviewGetListResponseDto;
 import com.example.demo.domain.review.dto.response.ReviewUpdateResponseDto;
 import com.example.demo.domain.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/review")
@@ -22,35 +21,56 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ReviewCreateResponseDto>> reviewCreateApi(
-            @RequestBody ReviewCreateRequestDto requestDto) {
-        ReviewCreateResponseDto responseDto = reviewService.createReview(requestDto);
 
-        ApiResponse<ReviewCreateResponseDto> apiResponse = new ApiResponse<>("리뷰가 생성 됐습니다", 200, responseDto);
-        ResponseEntity<ApiResponse<ReviewCreateResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    //생성
+    @PostMapping("/{loginUserId}")
+    public ResponseEntity<CommonResponse<ReviewCreateResponseDto>> reviewCreateApi(
+//            @PathVariable Long storeId,
+            @PathVariable ("loginUserId") Long loginUserId, // 삭제 예정
+            @RequestBody ReviewCreateRequestDto requestDto) {
+        ReviewCreateResponseDto responseDto = reviewService.createReview( loginUserId, requestDto);
+
+        CommonResponse<ReviewCreateResponseDto> commonResponse = new CommonResponse<>(true, "리뷰가 생성 됐습니다", responseDto);
+        ResponseEntity<CommonResponse<ReviewCreateResponseDto>> response = new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
         return response;
     }
 
+    //다 건 조회
     @GetMapping
-    public ResponseEntity<Page<ReviewPageResponseDto>> GetAllPageApi(
-            @PageableDefault(size = 10, page = 0) Pageable pageable
+    public ResponseEntity<CommonResponse<ReviewGetListResponseDto>> GetAllPageApi(
+
     ) {
-        Page<ReviewPageResponseDto> result = reviewService.findAll(pageable);
-        return ResponseEntity.ok(result);
+        ReviewGetListResponseDto responseDto = reviewService.foundAll();
+        CommonResponse<ReviewGetListResponseDto> commonResponse = new CommonResponse<>(true, "리뷰가 생성 됐습니다", responseDto);
+        ResponseEntity<CommonResponse<ReviewGetListResponseDto>> response = new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
+        return response;
     }
 
     //수정
     @PutMapping("/{reviewId}")
-    public ResponseEntity<ApiResponse<ReviewUpdateResponseDto>> reviewUpdateApi(
+    public  ResponseEntity<CommonResponse<ReviewUpdateResponseDto>> reviewUpdateApi(
             @PathVariable Long reviewId,
             @PathVariable Long loginUserId,
             @RequestBody ReviewCreateRequestDto requestDto
     ) {
         ReviewUpdateResponseDto responseDto = reviewService.updateReview(reviewId, loginUserId, requestDto);
 
-        ApiResponse<ReviewUpdateResponseDto> apiResponse = new ApiResponse<>("메세지가 수정 됐습니ㄷ", 200, responseDto);
-        ResponseEntity<ApiResponse<ReviewUpdateResponseDto>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        CommonResponse<ReviewUpdateResponseDto> commonResponse = new CommonResponse<>(true, "리뷰가 생성 됐습니다", responseDto);
+        ResponseEntity<CommonResponse<ReviewUpdateResponseDto>> response = new ResponseEntity<>(commonResponse, HttpStatus.CREATED);
         return response;
     }
+
+    //삭제
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<CommonResponse<Void>> reviewDeletedApi(
+            @PathVariable Long reviewId,
+            @PathVariable Long loginUserId
+    ) {
+        reviewService.deletedReview(reviewId, loginUserId);
+
+        CommonResponse<Void> apiResponse = new CommonResponse<>(true, "리뷰가 삭제 됐습니다.", null);
+        ResponseEntity<CommonResponse<Void>> response = new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        return response;
+    }
+
 }
