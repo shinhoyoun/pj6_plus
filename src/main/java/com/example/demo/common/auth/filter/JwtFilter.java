@@ -7,8 +7,6 @@
 //import jakarta.servlet.http.HttpServletRequest;
 //import jakarta.servlet.http.HttpServletResponse;
 //import lombok.RequiredArgsConstructor;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.context.SecurityContextHolder;
 //import org.springframework.stereotype.Component;
 //import org.springframework.web.filter.OncePerRequestFilter;
 //
@@ -79,9 +77,9 @@
 //        }
 //
 //        //JWT 토큰에서 북호화 한 데이터 저장
-////        Long userId = jwtService.extractUserId(jwt); //유저 ID
-////        String username = jwtService.extractUsername(jwt);
-////      String auth =  jwtService.extractRole(jwt); //권한 사용 안하면 삭제 예정
+//        Long userId = jwtService.extractUserId(jwt); //유저 ID
+//        String username = jwtService.extractUsername(jwt);
+//      String auth =  jwtService.extractRole(jwt); //권한 사용 안하면 삭제 예정
 //
 //        //인증 객체 생성 -> SecurityContext에 저장
 //
