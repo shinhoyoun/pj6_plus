@@ -1,5 +1,7 @@
 package com.example.demo.common.auth.dto.response;
 
+import java.time.LocalDateTime;
+
 public class ApiResponse<T> {
 
     //속성
@@ -8,7 +10,7 @@ public class ApiResponse<T> {
     private T date;
 
     //생성자
-    public ApiResponse(String message, Integer status, T date) {
+    public ApiResponse(String message, Integer status, T date, LocalDateTime now) {
         this.message = message;
         this.status = status;
         this.date = date;
