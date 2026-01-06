@@ -21,7 +21,7 @@ public class UserCouponController {
             @PathVariable long couponId,
             @RequestBody long userId) {
 
-        IssuedUserCouponResponseDto result = userCouponService.issuedCoupon(couponId, userId);
+        IssuedUserCouponResponseDto result = userCouponService.issuedCouponWithLock(couponId, userId);
         return ResponseEntity.ok(GlobalResponse.success(ISSUED_COUPON_SUCCESS, result));
     }
 }

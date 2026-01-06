@@ -4,7 +4,6 @@ import com.example.demo.domain.coupon.entity.Coupon;
 import com.example.demo.domain.coupon.repository.CouponRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
-@Slf4j
 class UserCouponServiceTest {
 
     @Autowired
@@ -117,19 +115,9 @@ class UserCouponServiceTest {
         executorService.shutdown();
 
         // then
-        Coupon foundCoupon = couponRepository.findById(coupon.getId())
-                .orElseThrow(() -> new RuntimeException("coupon not found")
-                );
-        // 발급된 쿠폰 수
-        long issuedCouponCount = foundCoupon.getIssuedCouponCount();
-
-        log.info("발급된 쿠폰 수 : {}", issuedCouponCount);
-
         // 101번째 쿠폰 발급 요청 예외 메시지
         String notIssuedCoupon = errorMessage.getMessage();
 
-        assertEquals("더이상 발급되지 않는 토큰입니다", notIssuedCoupon);
+        assertEquals("더이상 발급되지 않는 쿠폰입니다", notIssuedCoupon);
     }
-
-
 }

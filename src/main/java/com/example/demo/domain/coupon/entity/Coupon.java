@@ -17,13 +17,13 @@ public class Coupon {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "stores_id", nullable = false)
     private Store store;
 
     @Column(name = "coupon_name")
     private String couponName;
 
-    @Column(name = "issued_copon_count")
+    @Column(name = "issued_coupon_count")
     private long issuedCouponCount;
 
     @Column(name = "total_coupon_count")
@@ -34,13 +34,18 @@ public class Coupon {
         this.couponName = couponName;
     }
 
+    // 테스트용 쿠폰객체, 병합 후 삭제
+    public Coupon(String couponName) {
+        this.couponName = couponName;
+    }
+
     public void issuedCoupon() {
         this.issuedCouponCount++;
     }
 
-    public void expiredCoupon() {
+    public void notIssuedCoupon() {
         if(this.issuedCouponCount > this.totalCouponCount) {
-            throw new RuntimeException("만료된 토큰입니다");
+            throw new RuntimeException("더이상 발급되지 않는 쿠폰입니다");
         }
     }
 }
