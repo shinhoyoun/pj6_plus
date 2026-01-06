@@ -38,9 +38,11 @@ public class UserController {
 
     // 사용자 정보 상세 조회 (단건)
     @GetMapping("/{id}")
-    public void getOneDetail(@PathVariable Long id) {
+    public ResponseEntity<CommonResponse<UserGetOneDetailResponse>> getOneDetail(@PathVariable Long id) {
 
         CommonResponse<UserGetOneDetailResponse> response = userService.getOneDetail(id);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 사용자 목록 조회
