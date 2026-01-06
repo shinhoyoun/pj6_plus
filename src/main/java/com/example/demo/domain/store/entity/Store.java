@@ -120,6 +120,11 @@ public class Store extends BaseEntity {
     @Column(name = "monitoring_date")
     private LocalDate monitoringDate; // 모니터링날짜
 
+    @Column
+    private boolean isDeleted = false;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "review_id", nullable = false)
 
 
 
@@ -128,4 +133,7 @@ public class Store extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
+
+
+
 }
