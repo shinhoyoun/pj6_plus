@@ -121,8 +121,7 @@ public class Store extends BaseEntity {
     private LocalDate monitoringDate; // 모니터링날짜
 
     @Column
-    private boolean isDeleted;
-
+    private boolean isDeleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
