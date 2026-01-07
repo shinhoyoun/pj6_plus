@@ -75,6 +75,8 @@ public class StoreService {
         // 조회수 증가 + 어뷰징 방지
         cacheManager.increaseCount(keyword, userId);
 
+        log.info("store service search - middle");
+
         // db Like 검색
         return storeRepository.findByMainItem(keyword, pageable);
     }
