@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+
 @Slf4j
 @RestController
 @RequestMapping("/api/stores")
@@ -55,6 +56,23 @@ public class StoreController {
         StorePageResponse storesPage = storeService.getStoresPage(totalRating, status, page);
         ApiResponse<StorePageResponse> apiResponse = new ApiResponse("10개씩 페이징 조회", storesPage);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    // 인기 검색어 Top 10 조회
+    @GetMapping("/popular-keywords")
+    public List<String> popularKeywords() {
+
+        log.info("Store controller popularKeyword - 도착");
+        return storeService.getPopularMainItems();
+    }
+
+
+    // 주요취급품목 검색 (LIKE 검색)
+    @GetMapping("/search")
+    public Page<Store> search(@RequestParam(required = false) String keyword, Pageable pageable) {
+
+        log.info("Store controller search - 도착");
+        return storeService.searchByMainItem(keyword, pageable);
     }
 
 }
