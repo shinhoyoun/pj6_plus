@@ -22,21 +22,41 @@ public class StoreController {
 
     private final StoreService storeService;
 
-    // 인기 검색어 Top 10 조회
-    @GetMapping("/popular-keywords")
-    public List<String> popularKeywords() {
-
-        log.info("Store controller popularKeyword - 도착");
-        return storeService.getPopularMainItems();
-    }
-
-
-    // 주요취급품목 검색 (LIKE 검색)
+    // v2
     @GetMapping("/search")
-    public Page<Store> search(@RequestParam(required = false) String keyword, Pageable pageable) {
-
-        log.info("Store controller search - 도착");
-        return storeService.searchByMainItem(keyword, pageable);
+    public Page<Store> search(
+            @RequestParam String keyword,
+            @RequestParam Long userId,
+            Pageable pageable
+    ) {
+        return storeService.search(keyword, userId, pageable);
     }
+
+    @GetMapping("/popular")
+    public List<String> popular(
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        return storeService.getPopularKeywords(limit);
+    }
+
+
+
+    // v1
+//    // 인기 검색어 Top 10 조회
+//    @GetMapping("/popular-keywords")
+//    public List<String> popularKeywords() {
+//
+//        log.info("Store controller popularKeyword - 도착");
+//        return storeService.getPopularMainItems();
+//    }
+//
+//
+//    // 주요취급품목 검색 (LIKE 검색)
+//    @GetMapping("/search")
+//    public Page<Store> search(@RequestParam(required = false) String keyword, Pageable pageable) {
+//
+//        log.info("Store controller search - 도착");
+//        return storeService.searchByMainItem(keyword, pageable);
+//    }
 
 }
