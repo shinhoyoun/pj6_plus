@@ -1,6 +1,8 @@
 package com.example.demo.domain.store.service;
 
 import com.example.demo.domain.cache_v2.SearchKeywordCacheManager;
+import com.example.demo.domain.store.dto.response.StoreListResponse;
+import com.example.demo.domain.store.dto.response.StorePageResponse;
 import com.example.demo.domain.store.entity.Store;
 import com.example.demo.domain.store.repository.StoreRepository;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -9,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
