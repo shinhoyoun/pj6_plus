@@ -26,3 +26,7 @@ logging:
 server:
   tomcat:
     max-http-form-post-size: 100MB
+
+jwt:
+  secret:
+    key: dXJ2N3pBNEp0S0R5V2FhT0tHbFZqNnB5QXJ2QnN2YVZpQ1J3bFZ0RkJ5U1d1eE5nZk1jS1R0N0o4QkE=

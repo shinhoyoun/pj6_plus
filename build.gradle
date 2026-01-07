@@ -28,9 +28,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.springframework.security:spring-security-crypto'
-    implementation 'at.favre.lib:bcrypt:0.10.2'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     implementation "org.springframework.security:spring-security-crypto:7.0.2"
     implementation 'at.favre.lib:bcrypt:0.10.2'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -46,6 +44,17 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto
+//    implementation("org.springframework.security:spring-security-crypto:7.0.2")
+//    implementation 'at.fare.lib:bcrypt:0.10.2'
+//    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //Jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
+
     implementation 'com.opencsv:opencsv:5.6'
 }
 

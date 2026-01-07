@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 public class User extends BaseEntity {
 
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "username", unique = true)

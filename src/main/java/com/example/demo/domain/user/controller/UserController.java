@@ -23,13 +23,15 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
+//    Long loginUserId =
+//            (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     private final UserService userService;
 
     // 회원가입
     @PostMapping()
     public ResponseEntity<CommonResponse<UserCreateResponse>> createUser(@RequestBody @Valid UserCreateRequest request) {
 
-        log.info("UserController - 외원가입 요청 들어옴");
+        log.info("UserController - 회원가입 요청 들어옴");
 
         CommonResponse<UserCreateResponse> response = userService.create(request);
 
@@ -59,7 +61,7 @@ public class UserController {
     public ResponseEntity<CommonResponse<UserUpdateResponse>> updateUser(@PathVariable Long id,
                                                                          @RequestBody @Valid UserUpdateRequest request
     ) {
-        CommonResponse<UserUpdateResponse> response = userService.update(id, request);
+        CommonResponse<UserUpdateResponse> response = userService.update(id ,request);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
