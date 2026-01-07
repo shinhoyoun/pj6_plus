@@ -58,21 +58,4 @@ public class StoreController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    // 인기 검색어 Top 10 조회
-    @GetMapping("/popular-keywords")
-    public List<String> popularKeywords() {
-
-        log.info("Store controller popularKeyword - 도착");
-        return storeService.getPopularMainItems();
-    }
-
-
-    // 주요취급품목 검색 (LIKE 검색)
-    @GetMapping("/search")
-    public Page<Store> search(@RequestParam(required = false) String keyword, Pageable pageable) {
-
-        log.info("Store controller search - 도착");
-        return storeService.searchByMainItem(keyword, pageable);
-    }
-
 }
