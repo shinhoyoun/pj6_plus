@@ -1,7 +1,6 @@
 package com.example.demo.domain.store.dto;
 
 
-import com.example.demo.domain.store.entity.Store;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +24,12 @@ public class StoreListResponse {
             this.status = status;
         }
 
+        public Integer getTotalRating() {
+            return totalRating;
+        }
+        public String getStatus() {
+            return status;
+        }
     }
 
 }
