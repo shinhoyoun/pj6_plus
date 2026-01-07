@@ -1,9 +1,11 @@
 package com.example.demo.domain.store.service;
 
+import com.example.demo.domain.cache_v2.SearchKeywordCacheManager;
 import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.dto.response.StorePageResponse;
 import com.example.demo.domain.store.entity.Store;
 import com.example.demo.domain.store.repository.StoreRepository;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -23,6 +29,10 @@ public class StoreService {
     private static final int POPULAR_KEYWORD_LIMIT = 10;
 
     private final StoreRepository storeRepository;
+    private final SearchKeywordCacheManager cacheManager;
+
+    // 인기 검색어 저장소
+    private final ConcurrentHashMap<String, LongAdder> keywordCountMap = new ConcurrentHashMap<>();
 
 
     // 인기 검색어 조회
@@ -38,48 +48,39 @@ public class StoreService {
         return storeRepository.findByMainItem(keyword, pageable);
     }
 
-    // 전체평가 필터조회, 업체상태 필터조회 기능
-    @Transactional(readOnly = true)
-    public StoreListResponse getStores(Integer totalRating, String status) {
+//    //인기 검색어 TOP 10 조회 - 인메모리
+//    public List<String> getPopularKeywords() {
+//        return keywordCountMap.entrySet()// 1. map에 들어가는 모든 키, 값을 가짐.
+//                .stream()//2. 하나씩 처리 위해 스트림으로 반환 (for문 대체)
+//                //3. 내림차순 , 많이 검색한 키워드가 우선 순위
+//                .sorted((a, b) -> Long.compare(b.getValue().sum(), a.getValue().sum()))
+//                //4. 검색수 많은 키워드 상위 10으로 제한
+//                .limit(10)
+//                .map(Map.Entry::getKey)// 키값을 뽑는다
+//                .collect(Collectors.toList());//List<String> 반환
+//    }
 
-        List<Store> storeList = storeRepository.findStores(totalRating, status);
-        int counts = storeList.size();
-        List<StoreListResponse.StoreDto> storeDtoList = new ArrayList<>();
-
-        for (Store store : storeList) {
-
-            StoreListResponse.StoreDto storeDto = new StoreListResponse.StoreDto(
-                    store.getTotalRating(),
-                    store.getStatus()
-            );
-            storeDtoList.add(storeDto);
-        }
-        return new StoreListResponse(counts, storeDtoList);
+    //저장된 검색 키워드 조회
+    public Map<String, Long> getAllKeywords() {
+        return keywordCountMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> e.getValue().sum()
+                ));
     }
 
-    //Page활용한 데이터 조회
-    @Transactional(readOnly = true)
-    public StorePageResponse getStoresPage(Integer totalRating, String status, Pageable pageable) {
 
-        // 1단계 : 실제 데이터값
-        // 2단계 : 전체 데이터 갯수
-        // 3단계 : Page 객체로 변환
+    public Page<Store> search(String keyword, Long userId, Pageable pageable) {
 
-        Page<Store> storePage = storeRepository.findStoresPage(totalRating, status, pageable);
+        // 조회수 증가 + 어뷰징 방지
+        cacheManager.increaseCount(keyword, userId);
 
-        List<StorePageResponse.StorePageDto> storeDtoList =
-                storePage.getContent().stream()
-                        .map(store -> new StorePageResponse.StorePageDto(
-                                store.getCompanyName(),
-                                store.getTotalRating(),
-                                store.getStatus()
-                        ))
-                        .toList();
+        // db Like 검색
+        return storeRepository.findByMainItem(keyword, pageable);
+    }
 
-        return new StorePageResponse(
-                storePage.getTotalElements(), // 전체 데이터 개수
-                storeDtoList
-        );
+    public List<String> getPopularKeywords(int limit) {
+        return cacheManager.getTopKeywords(limit);
     }
 
 

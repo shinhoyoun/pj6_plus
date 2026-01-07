@@ -29,46 +29,41 @@ public class StoreController {
 
     private final StoreService storeService;
 
-    @GetMapping
-    public ResponseEntity<CommonResponse<StoreListResponse>> getStoresApi(
-            @RequestParam(required = false) Integer totalRating,
-            @RequestParam(required = false) String status
-    ) {
-        StoreListResponse response = storeService.getStores(totalRating, status);
-        CommonResponse<StoreListResponse> apiResponse = new CommonResponse(true,"전체평가 및 업소상태 필터조회", response);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-    /**
-     * 전체평가 필터조회, 업체상태 필터조회 + 페이징 기능추가
-     */
-    @GetMapping("/page")
-    public ResponseEntity<CommonResponse<StorePageResponse>> getStoresPageApi(
-            @RequestParam(required = false) Integer totalRating,
-            @RequestParam(required = false) String status,
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable page
-    ) {
-        StorePageResponse storesPage = storeService.getStoresPage(totalRating, status, page);
-        CommonResponse<StorePageResponse> apiResponse = new CommonResponse(true,"10개씩 페이징 조회", storesPage);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
-    }
-
-
-    // 인기 검색어 Top 10 조회
-    @GetMapping("/popular-keywords")
-    public List<String> popularKeywords() {
-
-        log.info("Store controller popularKeyword - 도착");
-        return storeService.getPopularMainItems();
-    }
-
-
-    // 주요취급품목 검색 (LIKE 검색)
+    // v2
     @GetMapping("/search")
-    public Page<Store> search(@RequestParam(required = false) String keyword, Pageable pageable) {
-
-        log.info("Store controller search - 도착");
-        return storeService.searchByMainItem(keyword, pageable);
+    public Page<Store> search(
+            @RequestParam String keyword,
+            @RequestParam Long userId,
+            Pageable pageable
+    ) {
+        return storeService.search(keyword, userId, pageable);
     }
+
+    @GetMapping("/popular")
+    public List<String> popular(
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+        return storeService.getPopularKeywords(limit);
+    }
+
+
+
+    // v1
+//    // 인기 검색어 Top 10 조회
+//    @GetMapping("/popular-keywords")
+//    public List<String> popularKeywords() {
+//
+//        log.info("Store controller popularKeyword - 도착");
+//        return storeService.getPopularMainItems();
+//    }
+//
+//
+//    // 주요취급품목 검색 (LIKE 검색)
+//    @GetMapping("/search")
+//    public Page<Store> search(@RequestParam(required = false) String keyword, Pageable pageable) {
+//
+//        log.info("Store controller search - 도착");
+//        return storeService.searchByMainItem(keyword, pageable);
+//    }
 
 }
