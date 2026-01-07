@@ -9,13 +9,11 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.client.WebClient;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +26,13 @@ public class StoreUploadService {
     private final StoreRepository storeRepository;
     private final SeoulShopRepository seoulShopRepository;
     private final ObjectMapper objectMapper;
+    private final WebClient webClient;
 
-    public StoreUploadService(StoreRepository storeRepository, SeoulShopRepository seoulShopRepository, ObjectMapper objectMapper) {
+    public StoreUploadService(StoreRepository storeRepository, SeoulShopRepository seoulShopRepository, ObjectMapper objectMapper, WebClient.Builder webClientBuilder) {
         this.storeRepository = storeRepository;
         this.seoulShopRepository = seoulShopRepository;
         this.objectMapper = objectMapper;
+        this.webClient = webClientBuilder.baseUrl("http://openapi.seoul.go.kr:8088").build();
     }
 
     public void uploadCsvFile(MultipartFile file) throws Exception {
@@ -127,29 +127,17 @@ public class StoreUploadService {
     public void saveAllStore(int start, int end) {
 
         String key = "686c6f66636c736a3934457a4c4973";
-        String baseUrl = "http://openapi.seoul.go.kr:8088/" + key + "/json/ServiceInternetShopInfo/" + start + "/" + end + "/";
-
-        StringBuilder result = new StringBuilder();
-
+        
+        String jsonString;
         try {
-            URL url = new URL(baseUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setConnectTimeout(10000);
-
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"))) {
-                String returnLine;
-                while ((returnLine = br.readLine()) != null) {
-                    result.append(returnLine).append("\n");
-                }
-            }
-            urlConnection.disconnect();
-
+            jsonString = webClient.get()
+                    .uri("/{key}/json/ServiceInternetShopInfo/{start}/{end}/", key, start, end)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
         } catch (Exception e) {
             throw new RuntimeException("API 호출 중 오류 발생", e);
         }
-
-        String jsonString = result.toString();
 
         try {
             JsonNode rootNode = objectMapper.readTree(jsonString);
@@ -205,13 +193,9 @@ public class StoreUploadService {
 
             seoulShopRepository.saveAll(shopList);
 
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             throw new RuntimeException("JSON 파싱 중 오류가 발생했습니다. 데이터: " + jsonString, e);
         }
 
     }
 }
-
-
-
-
