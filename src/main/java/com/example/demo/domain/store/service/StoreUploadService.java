@@ -135,7 +135,6 @@ public class StoreUploadService {
         try {
             JsonNode rootNode = objectMapper.readTree(jsonString);
 
-            // "ServiceInternetShopInfo" -> "row" 경로 찾기
             JsonNode rowNode = rootNode.path("ServiceInternetShopInfo").path("row");
 
             if (rowNode.isMissingNode() || !rowNode.isArray()) {
