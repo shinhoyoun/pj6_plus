@@ -1,17 +1,13 @@
 package com.example.demo.domain.review.service;
 
-import com.example.demo.common.response.CommonResponse;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.domain.review.dto.request.ReviewCreateRequestDto;
+import com.example.demo.domain.review.dto.response.GetAllReviewResponseDto;
 import com.example.demo.domain.review.dto.response.ReviewCreateResponseDto;
-import com.example.demo.domain.review.dto.response.ReviewGetListResponseDto;
 import com.example.demo.domain.review.dto.response.ReviewUpdateResponseDto;
 import com.example.demo.domain.review.entity.Review;
 import com.example.demo.domain.review.repository.ReviewRepository;
-
-import com.example.demo.domain.store.entity.SeoulShop;
 import com.example.demo.domain.store.entity.Store;
-
-
 import com.example.demo.domain.store.repository.StoreRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
@@ -19,145 +15,76 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.demo.common.enums.ErrorMessage.*;
 
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-//    private final JwtFilter jwtFilter;
     private final UserRepository userRepository;
-    //    private final Store;
     private final StoreRepository storeRepository;
 
-    /**
-     * 생성 기능
-     *
-     * @param requestDto
-     * @return
-     */
     @Transactional
-    public ReviewCreateResponseDto createReview(Long id,Long storeId ,ReviewCreateRequestDto requestDto) {
+    public ReviewCreateResponseDto createReview(Long userId, Long storeId, ReviewCreateRequestDto requestDto) {
 
+        Store foundStore = storeRepository.findById(storeId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_STORE));
 
-        //1. 스토어 아이디 조회
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new RuntimeException("스토아 조회할 수 없습니다."));
+        User foundUser = userRepository.findByIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        //2. 유저 아이디 조회
-        User user = userRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("유저 조회할 수 없습니다."));
+        Review newReview = new Review(
+                foundStore,
+                foundUser,
+                requestDto.getContent(),
+                requestDto.getName()
+        );
 
+        Review saveReview = reviewRepository.save(newReview);
 
-        //3.데이터 불러오기
-        String name = requestDto.getName();
-        String content = requestDto.getContent();
-
-        //4. 엔티티생성
-        Review review = Review.builder()
-                .store(store)
-                .user(user)
-                .name(name)
-                .content(content)
-                .build();
-        //5. 저장
-        Review save = reviewRepository.save(review);
-
-        //6.Dto
-        Long savedReview = save.getReviewId();
-        ReviewCreateResponseDto responseDto = new ReviewCreateResponseDto(
-                review.getReviewId(),
-                review.getUser().getId(),
-                review.getStore().getId(),
-                review.getContent(),
-                review.getName(),
-                review.getCreatedAt()
-                );
-        return responseDto;
+        return new ReviewCreateResponseDto(
+                saveReview.getId(),
+                saveReview.getStore(),
+                saveReview.getUser(),
+                saveReview.getContent(),
+                saveReview.getName(),
+                saveReview.getCreatedAt()
+        );
 
     }
 
-    /**
-     * 다 건 조회
-     */
-    @Transactional
-    public ReviewGetListResponseDto foundAll() {
+    @Transactional(readOnly = true)
+    public List<GetAllReviewResponseDto> foundAll() {
 
-        //멤버 찾기 -> 삭제 데이터 제외
-        List<Review> foundAllGet = reviewRepository.findAllByAndIsDeletedFalse();
+        List<Review> foundAllReview = reviewRepository.findAllAndIsDeletedFalse();
 
-        //데이터 반영
+       List<GetAllReviewResponseDto> reviewList = foundAllReview.stream()
+               .map(GetAllReviewResponseDto :: from)
+               .toList();
 
-        //내부
-        List<ReviewGetListResponseDto.ReviewGetAllResponseDto> reviewList = new ArrayList<>();
-        for (Review review : foundAllGet) {
-
-
-            ReviewGetListResponseDto.ReviewGetAllResponseDto reviewAllList =
-                    new ReviewGetListResponseDto.ReviewGetAllResponseDto(
-                            review.getReviewId(),
-                            review.getUser().getId(),
-                            review.getStore().getId(),
-                            review.getContent(),
-                            review.getName(),
-                            review.getCreatedAt()
-                            );
-
-            //저장
-            reviewList.add(reviewAllList);
-        }
-
-        ReviewGetListResponseDto reviewGetListResponseDto =
-                new ReviewGetListResponseDto(reviewList);
-
-        return reviewGetListResponseDto;
-
+       return reviewList;
     }
 
-    /**
-     * 수정 기능
-     * @param reviewId
-     * @param longUserId
-     * @param requestDto
-     * @return
-     */
     @Transactional
-    public ReviewUpdateResponseDto updateReview(Long reviewId, Long longUserId, ReviewCreateRequestDto requestDto) {
-        //리뷰 아이디 조회
-        Review foundReview = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
-                .orElseThrow(() -> new RuntimeException("댓글을 조회할 수 없습니다."));
+    public ReviewUpdateResponseDto updateReview(Long reviewId, ReviewCreateRequestDto requestDto) {
 
-        // 댓글 사용자 아닌 경우
-        if (!foundReview.getUser().getId().equals(longUserId)) {
-            throw new RuntimeException("댓글 사용자가 아닙니다.");
-        }
-        //데이터 불러오기
-        String content = requestDto.getContent();
-        //수정 메서드
-        foundReview.update(content);
-        //댓글 저장
-        Review savedReview = reviewRepository.save(foundReview);
-        return ReviewUpdateResponseDto.from(savedReview);
+        Review review = reviewRepository.findByIdAndIsDeletedFalse(reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_REVIEW));
+
+        review.update(requestDto.getContent());
+
+        return ReviewUpdateResponseDto.from(review);
     }
 
+    @Transactional
+    public void deletedReview(Long reviewId) {
+        Review foundReview = reviewRepository.findByIdAndIsDeletedFalse(reviewId).orElseThrow(
+                () -> new CustomException(NOT_FOUND_REVIEW)
+        );
 
-    /**
-     * 삭제 -> softDeleted
-     *
-     * @return
-     */
-    public CommonResponse<Void> deletedReview(Long reviewId, Long longUserId) {
-        //리뷰 아이디 조회
-        Review foundReview = reviewRepository.findByReviewIdAndIsDeletedFalse(reviewId)
-                .orElseThrow(() -> new RuntimeException("댓글을 조회할 수 없습니다."));
-
-        //삭제 권한 -> 유저가 다른 경우
-        if(!foundReview.getUser().getId().equals(longUserId)){
-            throw new RuntimeException("권한이 없습니다.");
-        }
-
-        return new CommonResponse<>( true, "리뷰가 삭제 됐습니다.", null);
+        foundReview.softDelete();
     }
 }

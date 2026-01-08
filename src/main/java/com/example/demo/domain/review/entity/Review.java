@@ -10,14 +10,11 @@ import lombok.*;
 @Table(name = "reviews")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
-
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
@@ -36,7 +33,9 @@ public class Review extends BaseEntity {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
-    public Review(String name, String content) {
+    public Review(Store store, User user, String name, String content) {
+        this.store = store;
+        this.user = user;
         this.content = content;
         this.name = name;
     }

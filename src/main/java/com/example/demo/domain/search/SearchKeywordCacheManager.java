@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/main/java/com/example/demo/domain/search/SearchKeywordCacheManager.java
 package com.example.demo.domain.search;
+========
+package com.example.demo.common.util.cache_v2;
+>>>>>>>> dev:src/main/java/com/example/demo/common/util/cache_v2/SearchKeywordCacheManager.java
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

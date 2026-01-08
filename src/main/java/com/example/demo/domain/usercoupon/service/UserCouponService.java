@@ -1,5 +1,7 @@
 package com.example.demo.domain.usercoupon.service;
 
+import com.example.demo.common.annotation.RedisLock;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.domain.coupon.entity.Coupon;
 import com.example.demo.domain.coupon.repository.CouponRepository;
 import com.example.demo.domain.user.entity.User;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.example.demo.common.enums.ErrorMessage.*;
+
 @Service
 @RequiredArgsConstructor
 public class UserCouponService {
@@ -18,20 +22,22 @@ public class UserCouponService {
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
 
+    // aop 적용전 적용후로 나눠 테스트코드 작성
     @Transactional
+    @RedisLock(key = "lock:coupon")
     public IssuedUserCouponResponseDto issuedCouponWithLock(long couponId, long userId) {
         Coupon foundCoupon = couponRepository.findByIdForLOCK(couponId).orElseThrow(
-                () -> new RuntimeException("존재하지 않은 쿠폰입니다.")
+                () -> new CustomException(NOT_FOUND_COUPON)
         );
 
         User foundUser = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("존재하지 않은 유저입니다.")
+                () -> new CustomException(NOT_FOUND_USER)
         );
 
         boolean exists = userCouponRepository.existsByCouponIdAndUserId(couponId, userId);
 
         if(exists) {
-            throw new RuntimeException("중복 발급이 불가합니다.");
+            throw new CustomException(ALREADY_ISSUED_COUPON);
         }
 
         UserCoupon userCoupon = new UserCoupon(foundCoupon, foundUser);
