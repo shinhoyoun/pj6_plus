@@ -4,11 +4,13 @@ import com.example.demo.domain.coupon.entity.Coupon;
 import com.example.demo.domain.coupon.repository.CouponRepository;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
+import com.example.demo.domain.usercoupon.entitiy.UserCoupon;
+import com.example.demo.domain.usercoupon.repository.UserCouponRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest
+@Slf4j
 class UserCouponServiceTest {
 
     @Autowired
@@ -29,6 +32,9 @@ class UserCouponServiceTest {
 
     @Autowired
     private CouponRepository couponRepository;
+
+    @Autowired
+    private UserCouponRepository userCouponRepository;
 
     private Throwable errorMessage;
 
@@ -49,7 +55,7 @@ class UserCouponServiceTest {
                 .toList();
 
         // when
-        ExecutorService executorService = Executors.newFixedThreadPool(16);
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
         CountDownLatch latch = new CountDownLatch(200);
 
         for (User user : users) {
@@ -58,8 +64,7 @@ class UserCouponServiceTest {
                     userCouponService.issuedCouponWithLock(coupon.getId(), user.getId());
                 } catch (RuntimeException exception) {
                     throw new RuntimeException(exception.getMessage());
-                }
-                finally {
+                } finally {
                     latch.countDown();
                 }
             });
@@ -81,7 +86,7 @@ class UserCouponServiceTest {
 
     @Test
     @DisplayName("유저 101명의 동시성 이슈와 동시성 이슈에 대한 비관적 락 적용 후 101명부터 쿠폰발급을 막는 예외발생")
-    public void userForLock_issuedOneCouponUsers_exceptionTest() throws InterruptedException{
+    public void userForLock_issuedOneCouponUsers_exceptionTest() throws InterruptedException {
         // give
         // 쿠폰 객체, 테스트 종료 후 store_id null x
         Coupon coupon = new Coupon("text 쿠폰");
@@ -96,7 +101,7 @@ class UserCouponServiceTest {
                 .toList();
 
         // when
-        ExecutorService executorService = Executors.newFixedThreadPool(8);
+        ExecutorService executorService = Executors.newFixedThreadPool(51);
         CountDownLatch latch = new CountDownLatch(101);
 
         for (User user : users) {
@@ -105,8 +110,7 @@ class UserCouponServiceTest {
                     userCouponService.issuedCouponWithLock(coupon.getId(), user.getId());
                 } catch (RuntimeException exception) {
                     errorMessage = exception;
-                }
-                finally {
+                } finally {
                     latch.countDown();
                 }
             });
@@ -119,5 +123,43 @@ class UserCouponServiceTest {
         String notIssuedCoupon = errorMessage.getMessage();
 
         assertEquals("더이상 발급되지 않는 쿠폰입니다", notIssuedCoupon);
+    }
+
+    @Test
+    @DisplayName("두 서버 요청을 받아 래디스락 테스트")
+    public void multipleServerRequest_redisRockTest() throws InterruptedException {
+        // give
+        // 쿠폰 객체, 테스트 종료 후 store_id null x
+        Coupon coupon = new Coupon("text 쿠폰");
+        couponRepository.save(coupon);
+
+        User user = new User("test", "test@naver", "test1234", "홍길동");
+        userRepository.save(user);
+
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        Runnable task = () -> {
+
+            try {
+                userCouponService.issuedCouponWithLock(coupon.getId(), user.getId());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        // 각자 다른 uuid를 가진 두 서버
+        executor.submit(task);
+        executor.submit(task);
+
+        // 동시요청을 위한 요청지연
+        Thread.sleep(3000);
+
+        // 쿠폰발급 결과
+        UserCoupon result = userCouponRepository.findByCouponAndUser(coupon, user).orElseThrow();
+
+        // 서버하나의 요청만 성공
+        log.info("쿠폰 발급 결과 {}" , result.getId());
+        assertEquals(1, result.getId());
     }
 }
