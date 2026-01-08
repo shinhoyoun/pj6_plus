@@ -111,10 +111,8 @@ public class Store extends BaseEntity {
     private String siteOpenYear; // 사이트개설년도
 
 
-
-
-
-
+    @Column
+    private boolean isDeleted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
