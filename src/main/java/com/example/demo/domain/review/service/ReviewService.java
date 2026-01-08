@@ -8,7 +8,6 @@ import com.example.demo.domain.review.dto.response.ReviewUpdateResponseDto;
 import com.example.demo.domain.review.entity.Review;
 import com.example.demo.domain.review.repository.ReviewRepository;
 
-import com.example.demo.domain.store.entity.SeoulShop;
 import com.example.demo.domain.store.entity.Store;
 
 

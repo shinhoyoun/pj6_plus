@@ -1,8 +1,6 @@
 package com.example.demo.domain.store.service;
 
-import com.example.demo.domain.store.entity.SeoulShop;
 import com.example.demo.domain.store.entity.Store;
-import com.example.demo.domain.store.repository.SeoulShopRepository;
 import com.example.demo.domain.store.repository.StoreRepository;
 import com.opencsv.CSVReader;
 import jakarta.transaction.Transactional;
@@ -14,7 +12,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.InputStreamReader;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +21,11 @@ import java.util.List;
 public class StoreUploadService {
 
     private final StoreRepository storeRepository;
-    private final SeoulShopRepository seoulShopRepository;
     private final ObjectMapper objectMapper;
     private final WebClient webClient;
 
-    public StoreUploadService(StoreRepository storeRepository, SeoulShopRepository seoulShopRepository, ObjectMapper objectMapper, WebClient.Builder webClientBuilder) {
+    public StoreUploadService(StoreRepository storeRepository, ObjectMapper objectMapper, WebClient.Builder webClientBuilder) {
         this.storeRepository = storeRepository;
-        this.seoulShopRepository = seoulShopRepository;
         this.objectMapper = objectMapper;
         this.webClient = webClientBuilder.baseUrl("http://openapi.seoul.go.kr:8088").build();
     }
@@ -86,7 +81,6 @@ public class StoreUploadService {
                             .email(email)
                             .salesRegNo(salesRegNo)
                             .businessType(businessType)
-                            .initialReportDate(LocalDate.parse(initialReportDate))
                             .address(address)
                             .status(status)
                             .totalRating(Integer.valueOf(totalRating))
@@ -110,7 +104,6 @@ public class StoreUploadService {
                             .complaintBoard(complaintBoard)
                             .memberWithdrawal(memberWithdrawal)
                             .siteOpenYear(siteOpenYear)
-                            .monitoringDate(LocalDate.parse(monitoringDate))
                             .build();
 
                     stores.add(store);
@@ -149,31 +142,29 @@ public class StoreUploadService {
                 return;
             }
 
-            List<SeoulShop> shopList = new ArrayList<>();
+            List<Store> storeList = new ArrayList<>();
 
             for (JsonNode itemNode : rowNode) {
-                SeoulShop seoulShop = SeoulShop.builder()
+                Store store = Store.builder()
                         .companyName(itemNode.path("COMPANY").asText(null))
-                        .shopName(itemNode.path("SHOP_NAME").asText(null))
+                        .mallName(itemNode.path("SHOP_NAME").asText(null))       // shopName -> mallName
                         .domainName(itemNode.path("DOMAIN_NAME").asText(null))
                         .phoneNumber(itemNode.path("TEL").asText(null))
                         .email(itemNode.path("EMAIL").asText(null))
-                        .salesRegistrationNumber(itemNode.path("UPJONG_NBR").asText(null))
+                        .salesRegNo(itemNode.path("UPJONG_NBR").asText(null))    // salesRegistrationNumber -> salesRegNo
                         .businessType(itemNode.path("YPFORM").asText(null))
-                        .initialReportDate(itemNode.path("FIRST_HEO_DATE").asText(null))
                         .address(itemNode.path("COM_ADDR").asText(null))
-                        .statusCode(itemNode.path("STAT_CD").asText(null))
-                        .status(itemNode.path("STAT_NM").asText(null))
+                        .status(itemNode.path("STAT_NM").asText(null))           // statusCode/status 중 '상태명' 매핑
                         .totalRating(itemNode.path("TOT_RATINGPOINT").asInt(0))
-                        .businessInfoRating(itemNode.path("CHOGI_RATINGPOINT").asInt(0))
+                        .bizInfoRating(itemNode.path("CHOGI_RATINGPOINT").asInt(0))      // businessInfoRating -> bizInfoRating
                         .withdrawalRating(itemNode.path("CHUNG_RATINGPOINT").asInt(0))
-                        .paymentMethodRating(itemNode.path("DEAL_RATINGPOINT").asInt(0))
+                        .paymentRating(itemNode.path("DEAL_RATINGPOINT").asInt(0))       // paymentMethodRating -> paymentRating
                         .termsRating(itemNode.path("PYOJUN_RATINGPOINT").asInt(0))
-                        .privacySecurityRating(itemNode.path("SECURITY_RATINGPOINT").asInt(0))
+                        .privacyRating(itemNode.path("SECURITY_RATINGPOINT").asInt(0))   // privacySecurityRating -> privacyRating
                         .mainItem(itemNode.path("SERVICE").asText(null))
                         .withdrawalPossibility(itemNode.path("CHUNG").asText(null))
                         .initialScreenInfo(itemNode.path("CHOGI").asText(null))
-                        .paymentMethods(itemNode.path("GYULJE").asText(null))
+                        .paymentMethod(itemNode.path("GYULJE").asText(null))             // paymentMethods -> paymentMethod
                         .termsCompliance(itemNode.path("PYOJUN").asText(null))
                         .privacyPolicy(itemNode.path("P_INFO_CARE").asText(null))
                         .requestExtraInfo(itemNode.path("PER_INFO").asText(null))
@@ -185,13 +176,12 @@ public class StoreUploadService {
                         .complaintBoard(itemNode.path("CLIENT_BBS").asText(null))
                         .memberWithdrawal(itemNode.path("LEAVE").asText(null))
                         .siteOpenYear(itemNode.path("KAESOL_YEAR").asText(null))
-                        .monitoringDate(itemNode.path("REG_DATE").asText(null))
                         .build();
 
-                shopList.add(seoulShop);
+                storeList.add(store);
             }
 
-            seoulShopRepository.saveAll(shopList);
+            storeRepository.saveAll(storeList);
 
         } catch (Exception e) {
             throw new RuntimeException("JSON 파싱 중 오류가 발생했습니다. 데이터: " + jsonString, e);

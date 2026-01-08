@@ -20,7 +20,6 @@ public class Store extends BaseEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    // 1. 기본 정보
     @Column(name = "company_name")
     private String companyName; // 상호
 
@@ -42,20 +41,15 @@ public class Store extends BaseEntity {
     @Column(name = "business_type")
     private String businessType; // 영업형태
 
-    @Column(name = "initial_report_date")
-    private LocalDate initialReportDate; // 최초신고일자 (YYYY-MM-DD)
-
     @Column(name = "address")
     private String address; // 회사주소
 
-    // 2. 상태 및 평가 (필터링 핵심 컬럼)
     @Column(name = "status")
     private String status; // 업소상태 (영업중, 휴업중 등)
 
     @Column(name = "total_rating")
     private Integer totalRating; // 전체평가 (0~3)
 
-    // 3. 세부 평가 항목
     @Column(name = "biz_info_rating")
     private Integer bizInfoRating; // 사업자정보표시평가
 
@@ -71,7 +65,6 @@ public class Store extends BaseEntity {
     @Column(name = "privacy_rating")
     private Integer privacyRating; // 개인정보보안평가
 
-    // 4. 상세 정보
     @Column(name = "main_item")
     private String mainItem; // 주요취급품목
 
@@ -117,8 +110,6 @@ public class Store extends BaseEntity {
     @Column(name = "site_open_year")
     private String siteOpenYear; // 사이트개설년도
 
-    @Column(name = "monitoring_date")
-    private LocalDate monitoringDate; // 모니터링날짜
 
 
 
