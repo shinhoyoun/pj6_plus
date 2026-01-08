@@ -1,7 +1,10 @@
 package com.example.demo.domain.store.repository;
 
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
 import com.example.demo.domain.store.entity.QStore;
 import com.example.demo.domain.store.entity.Store;
+import com.example.demo.domain.store.service.StoreSearchResponse;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -21,6 +24,22 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     // QueryDSL 쿼리를 생성해주는 팩토리
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<StoreSearchResponse> searchStoreByMultiCondition(StoreSearchRequest storeSearchRequest) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+    }
+
+
+
+
+
+
+
+
+
+
 
     // boolean expressoin 메서드
     public BooleanExpression mainItemContains(String keyword) {
@@ -66,6 +85,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 // 결과 조회
                 .fetch();
     }
+
+
 
     /**
      * 주요취급품목 검색 + 페이지네이션

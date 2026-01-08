@@ -1,9 +1,11 @@
 package com.example.demo.domain.store.controller;
 
 import com.example.demo.common.response.CommonResponse;
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
 import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.dto.response.StorePageResponse;
 import com.example.demo.domain.store.entity.Store;
+import com.example.demo.domain.store.repository.StoreRepositoryImpl;
 import com.example.demo.domain.store.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +36,8 @@ public class StoreController {
             @RequestParam(required = false) Integer totalRating,
             @RequestParam(required = false) String status
     ) {
-        StoreListResponse response = storeService.getStores(totalRating, status);
-        CommonResponse<StoreListResponse> apiResponse = new CommonResponse(true,"전체평가 및 업소상태 필터조회", response);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        StoreSearchRequest storeSearchRequest = new StoreSearchRequest(totalRating, status);
+        storeService.getStores(storeSearchRequest);
     }
 
     /**

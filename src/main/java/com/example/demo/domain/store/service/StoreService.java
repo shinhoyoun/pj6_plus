@@ -1,5 +1,6 @@
 package com.example.demo.domain.store.service;
 
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
 import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.dto.response.StorePageResponse;
 import com.example.demo.domain.store.entity.Store;
@@ -40,21 +41,8 @@ public class StoreService {
 
     // 전체평가 필터조회, 업체상태 필터조회 기능
     @Transactional(readOnly = true)
-    public StoreListResponse getStores(Integer totalRating, String status) {
-
-        List<Store> storeList = storeRepository.findStores(totalRating, status);
-        int counts = storeList.size();
-        List<StoreListResponse.StoreDto> storeDtoList = new ArrayList<>();
-
-        for (Store store : storeList) {
-
-            StoreListResponse.StoreDto storeDto = new StoreListResponse.StoreDto(
-                    store.getTotalRating(),
-                    store.getStatus()
-            );
-            storeDtoList.add(storeDto);
-        }
-        return new StoreListResponse(counts, storeDtoList);
+    public List<StoreSearchResponse> getStores(StoreSearchRequest storeSearchRequest) {
+        return storeRepository.searchStoreByMultiCondition(storeSearchRequest);
     }
 
     //Page활용한 데이터 조회

@@ -1,6 +1,8 @@
 package com.example.demo.domain.store.repository;
 
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
 import com.example.demo.domain.store.entity.Store;
+import com.example.demo.domain.store.service.StoreSearchResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,6 +17,8 @@ public interface StoreRepositoryCustom {
      * - 상위 N개(limit) 반환
      */
     List<String> findPopularMainItems(int limit);
+
+    List<StoreSearchResponse> searchStoreByMultiCondition(StoreSearchRequest storeSearchRequest);
 
     /**
      * 주요취급품목 검색 API (v1)
