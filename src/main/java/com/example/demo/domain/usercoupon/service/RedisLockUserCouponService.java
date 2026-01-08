@@ -25,8 +25,11 @@ public class RedisLockUserCouponService {
         }
 
         try{
+            Thread.sleep(3000);
             userCouponService.issuedCouponWithLock(couponId, userId);
-        } finally {
+        } catch (InterruptedException interruptedException) {
+            throw new RuntimeException("잠시후 다시 시도해주세요");
+        } finally{
             redisLockService.unlock(lockKey, uuidStr);
         }
     }
