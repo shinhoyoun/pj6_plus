@@ -1,4 +1,4 @@
-package com.example.demo.domain.cache_v2;
+package com.example.demo.domain.search;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

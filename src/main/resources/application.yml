@@ -1,4 +1,8 @@
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
   datasource:
     url: jdbc:mysql://localhost:3306/pj6_plus
     username: root
@@ -17,11 +21,11 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
-## sql 로그 확인하기위해
-logging:
-  level:
-    root: info
-    org.hibernate.SQL: debug
+### sql 로그 확인하기위해
+#logging:
+#  level:
+#    root: info
+#    org.hibernate.SQL: debug
 
 server:
   tomcat:

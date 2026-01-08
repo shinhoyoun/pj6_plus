@@ -1,4 +1,4 @@
-package com.example.demo.domain.search.response;
+package com.example.demo.domain.search.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
