@@ -1,5 +1,6 @@
 package com.example.demo.domain.store.service;
 
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
 import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.dto.response.StorePageResponse;
 import com.example.demo.domain.store.entity.Store;
@@ -40,63 +41,6 @@ public class StoreService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // 전체평가 필터조회, 업체상태 필터조회 기능
     @Transactional(readOnly = true)
     public StoreListResponse getStores(Integer totalRating, String status) {
@@ -129,5 +73,10 @@ public class StoreService {
                 storePage.getTotalElements(), // 전체 데이터 개수
                 storeDtoList
         );
+    }
+
+    // QueryDSL를 활용한 데이터 조회
+    public void getStoresQuery(StoreSearchRequest storeSearchRequest) {
+        storeRepository.searchStoreByMultiCondition(storeSearchRequest);
     }
 }

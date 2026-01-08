@@ -1,6 +1,7 @@
 package com.example.demo.domain.store.controller;
 
 import com.example.demo.common.response.CommonResponse;
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
 import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.dto.response.StorePageResponse;
 import com.example.demo.domain.store.entity.Store;
@@ -51,6 +52,15 @@ public class StoreController {
         StorePageResponse storesPage = storeService.getStoresPage(totalRating, status, page);
         CommonResponse<StorePageResponse> apiResponse = new CommonResponse(true,"10개씩 페이징 조회", storesPage);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/query")
+    public void getStoresQueryApi(
+            @RequestParam(required = false) Integer totalRating,
+            @RequestParam(required = false) String status
+    ) {
+        StoreSearchRequest storeSearchRequest = new StoreSearchRequest(totalRating, status);
+        storeService.getStoresQuery(storeSearchRequest);
     }
 
 

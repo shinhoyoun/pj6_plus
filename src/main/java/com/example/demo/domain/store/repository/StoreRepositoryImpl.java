@@ -1,26 +1,40 @@
 package com.example.demo.domain.store.repository;
 
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
+import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.entity.QStore;
 import com.example.demo.domain.store.entity.Store;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import static com.example.demo.domain.store.entity.QStore.store;
 
 @Slf4j
 @RequiredArgsConstructor
-public class StoreRepositoryImpl implements StoreRepositoryCustom {
+public class StoreRepositoryImpl implements StoreCustomRepository {
 
     // QueryDSL 쿼리를 생성해주는 팩토리
     private final JPAQueryFactory queryFactory;
+
+
+//    @Override
+//    public List<StoreListResponse.StoreDto> searchStoreByMultiCondition(StoreSearchRequest request) {
+//
+//        BooleanBuilder builder = new BooleanBuilder();
+//
+//        if (request.getTotalRating() != null) {
+//            builder.and()
+//        }
+//
+//    }
+
 
     // boolean expressoin 메서드
     public BooleanExpression mainItemContains(String keyword) {

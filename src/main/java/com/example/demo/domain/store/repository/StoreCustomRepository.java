@@ -1,12 +1,14 @@
 package com.example.demo.domain.store.repository;
 
+import com.example.demo.domain.store.dto.request.StoreSearchRequest;
+import com.example.demo.domain.store.dto.response.StoreListResponse;
 import com.example.demo.domain.store.entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface StoreRepositoryCustom {
+public interface StoreCustomRepository {
 
     /**
      * 주요취급품목 인기 검색어 조회
@@ -22,5 +24,7 @@ public interface StoreRepositoryCustom {
      * - 페이지네이션 적용
      */
     Page<Store> findByMainItem(String keyword, Pageable pageable);
+
+//    List<StoreListResponse.StoreDto> searchStoreByMultiCondition(StoreSearchRequest storeSearchRequest);
 
 }

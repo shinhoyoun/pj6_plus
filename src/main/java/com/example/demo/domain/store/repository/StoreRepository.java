@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StoreRepository extends JpaRepository<Store, Long> , StoreRepositoryCustom{
+public interface StoreRepository extends JpaRepository<Store, Long> , StoreCustomRepository {
 
     Optional<Store> findById(Long storeId);
 
