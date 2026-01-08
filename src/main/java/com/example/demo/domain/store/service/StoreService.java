@@ -38,23 +38,71 @@ public class StoreService {
         return storeRepository.findByMainItem(keyword, pageable);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // 전체평가 필터조회, 업체상태 필터조회 기능
     @Transactional(readOnly = true)
     public StoreListResponse getStores(Integer totalRating, String status) {
 
         List<Store> storeList = storeRepository.findStores(totalRating, status);
         int counts = storeList.size();
-//        List<StoreListResponse.StoreDto> storeDtoList = new ArrayList<>();
-//
-//        for (Store store : storeList) {
-//
-//            StoreListResponse.StoreDto storeDto = new StoreListResponse.StoreDto(
-//                    store.getTotalRating(),
-//                    store.getStatus()
-//            );
-//            storeDtoList.add(storeDto);
-//        }
-//        return new StoreListResponse(counts, storeDtoList);
         List<StoreListResponse.StoreDto> storeDtoList =
                 storeList.stream()
                         .map(store -> new StoreListResponse.StoreDto(
@@ -67,11 +115,6 @@ public class StoreService {
     //Page활용한 데이터 조회
     @Transactional(readOnly = true)
     public StorePageResponse getStoresPage(Integer totalRating, String status, Pageable pageable) {
-
-        // 1단계 : 실제 데이터값
-        // 2단계 : 전체 데이터 갯수
-        // 3단계 : Page 객체로 변환
-
         Page<Store> storePage = storeRepository.findStoresPage(totalRating, status, pageable);
 
         List<StorePageResponse.StorePageDto> storeDtoList =
@@ -82,12 +125,9 @@ public class StoreService {
                                 store.getStatus()
                         ))
                         .toList();
-
         return new StorePageResponse(
                 storePage.getTotalElements(), // 전체 데이터 개수
                 storeDtoList
         );
     }
-
-
 }
