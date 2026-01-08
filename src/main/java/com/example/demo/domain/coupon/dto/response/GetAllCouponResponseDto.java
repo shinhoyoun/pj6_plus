@@ -3,10 +3,8 @@ package com.example.demo.domain.coupon.dto.response;
 import com.example.demo.domain.coupon.entity.Coupon;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 public class GetAllCouponResponseDto {
 

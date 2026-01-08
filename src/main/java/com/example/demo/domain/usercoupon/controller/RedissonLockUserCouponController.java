@@ -3,7 +3,6 @@ package com.example.demo.domain.usercoupon.controller;
 import com.example.demo.common.response.GlobalResponse;
 import com.example.demo.domain.usercoupon.service.RedissonLockUserCouponService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

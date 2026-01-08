@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @RequiredArgsConstructor
 public class IssuedUserCouponResponseDto {
     private final Long id;

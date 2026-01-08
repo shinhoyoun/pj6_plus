@@ -1,6 +1,8 @@
 package com.example.demo.common.redis.aspect;
 
 import com.example.demo.common.annotation.RedisLock;
+import com.example.demo.common.enums.ErrorMessage;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.common.redis.service.RedisLockService;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,6 +11,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
+
+import static com.example.demo.common.enums.ErrorMessage.FAILED_LOCK;
 
 @Aspect
 @Component
@@ -29,7 +33,7 @@ public class RedisRockAspect {
         String key = keyPreFix + objectId;
 
         if (!redisLockService.tryLock(key, value, redisLock.timeout())) {
-            throw new RuntimeException("잠시후 다시 시도해주세요");
+            throw new CustomException(FAILED_LOCK);
         }
 
         try {

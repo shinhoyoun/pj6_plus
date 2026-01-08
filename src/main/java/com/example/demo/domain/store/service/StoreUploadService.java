@@ -1,5 +1,7 @@
 package com.example.demo.domain.store.service;
 
+import com.example.demo.common.enums.ErrorMessage;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.domain.store.entity.Store;
 import com.example.demo.domain.store.repository.StoreRepository;
 import com.opencsv.CSVReader;
@@ -7,7 +9,6 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
@@ -51,7 +52,6 @@ public class StoreUploadService {
                        String email = nextRecord[4];
                        String salesRegNo = nextRecord[5];
                        String businessType = nextRecord[6];
-                       String initialReportDate = nextRecord[7];
                        String address = nextRecord[8];
                        String status = nextRecord[9];
                        String totalRating = nextRecord[10];
@@ -75,8 +75,6 @@ public class StoreUploadService {
                        String complaintBoard = nextRecord[28];
                        String memberWithdrawal = nextRecord[29];
                        String siteOpenYear = nextRecord[30];
-                       String monitoringDate = nextRecord[31];
-
 
                         Store store = Store.builder()
                                 .companyName(companyName)
@@ -129,7 +127,6 @@ public class StoreUploadService {
                 }
             } finally {
                 if (file.exists()) {
-                    file.delete();
                 }
             }
         }
@@ -147,7 +144,7 @@ public class StoreUploadService {
                     .bodyToMono(String.class)
                     .block();
         } catch (Exception e) {
-            throw new RuntimeException("API 호출 중 오류 발생", e);
+            throw new CustomException(ErrorMessage.API_CALL_ERROR);
         }
 
         try {
@@ -214,7 +211,7 @@ public class StoreUploadService {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("JSON 파싱 중 오류가 발생했습니다. 데이터: " + jsonString, e);
+            throw new CustomException(ErrorMessage.STORE_UPLOAD_FAILED);
         }
 
     }

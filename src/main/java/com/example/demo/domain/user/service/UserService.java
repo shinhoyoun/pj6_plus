@@ -1,7 +1,6 @@
 package com.example.demo.domain.user.service;
 
-import com.example.demo.common.response.CommonResponse;
-
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.domain.user.dto.request.UserCreateRequest;
 import com.example.demo.domain.user.dto.request.UserUpdateRequest;
 import com.example.demo.domain.user.dto.response.UserCreateResponse;
@@ -10,7 +9,6 @@ import com.example.demo.domain.user.dto.response.UserGetOneDetailResponse;
 import com.example.demo.domain.user.dto.response.UserUpdateResponse;
 import com.example.demo.domain.user.entity.User;
 import com.example.demo.domain.user.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.example.demo.common.util.PasswordEncoder;
@@ -18,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static com.example.demo.common.enums.ErrorMessage.*;
 
 @Slf4j
 @Service
@@ -30,71 +30,54 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public CommonResponse<UserCreateResponse> create(UserCreateRequest request) {
+    public UserCreateResponse create(UserCreateRequest request) {
 
-        boolean exitsEmail = userRepository.existsByEmail(request.getEmail());
+        User newUser = new User(
+                request.getUsername(),
+                request.getEmail(),
+                passwordEncoder.encode(request.getPassword()),
+                request.getName()
+        );
 
-        if (exitsEmail) {
-            throw new IllegalStateException("이미 사용중인 이메일입니다.");
-        }
+        User savedUser = userRepository.save(newUser);
 
-        boolean exitsUsername = userRepository.existsByUsername(request.getUsername());
-
-        if (exitsUsername) {
-            throw new IllegalArgumentException("이미 사용중인 사용자명입니다.");
-        }
-
-        User user = new User(request.getUsername(), request.getEmail(), passwordEncoder.encode(request.getPassword()), request.getName());
-
-        User savedUser = userRepository.save(user);
-
-        UserCreateResponse response = UserCreateResponse.from(savedUser);
-
-        return new CommonResponse<>(true, "회원가입이 완료되었습니다.", response);
+        return UserCreateResponse.from(savedUser);
     }
 
     // 사용자 정보 상세 조회 (단건)
     @Transactional(readOnly = true)
-    public CommonResponse<UserGetOneDetailResponse> getOneDetail(Long id) {
+    public UserGetOneDetailResponse getOneDetail(Long id) {
 
         User user = userRepository.findById(id)
-                .orElseThrow( () -> new IllegalStateException("사용자를 찾을 수 없습니다."));
+                .orElseThrow( () -> new CustomException(NOT_FOUND_USER));
 
-        UserGetOneDetailResponse response = UserGetOneDetailResponse.from(user);
-
-        return new CommonResponse<>(true, "사용자 상세 정보 조회 성공", response);
+        return UserGetOneDetailResponse.from(user);
     }
 
     // 사용자 목록 조회
     @Transactional(readOnly = true)
-    public CommonResponse<List<UserGetListResponse>> getList() {
+    public List<UserGetListResponse> getList() {
 
         List<User> userList = userRepository.findAll();
 
-        List<UserGetListResponse> userGetListResponsesList = userList.stream()
+        return userList.stream()
                 .map(UserGetListResponse::from)
                 .toList();
-
-        return new CommonResponse<>(true, "사용자 목록 조회 성공", userGetListResponsesList);
     }
 
     // 사용자 정보 수정
     @Transactional
-    public CommonResponse<UserUpdateResponse> update(Long userId, @Valid UserUpdateRequest request) {
+    public UserUpdateResponse update(Long userId, UserUpdateRequest request) {
 
         User foundUser = userRepository.findByIdAndIsDeletedFalse(userId)
-                .orElseThrow(() -> new RuntimeException("없는 사용자입니다."));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        boolean exitsEmail = userRepository.existsByEmail(request.getEmail());
-
-        if (exitsEmail) {
-            throw new IllegalStateException("이미 사용중인 이메일입니다.");
+        if (foundUser.getEmail().equals(request.getEmail())) {
+            throw new CustomException(EXISTS_EMAIL);
         }
 
-        boolean exitsUsername = userRepository.existsByUsername(request.getUsername());
-
-        if (exitsUsername) {
-            throw new IllegalArgumentException("이미 사용중인 사용자명입니다.");
+        if (foundUser.getUsername().equals(request.getUsername())) {
+            throw new CustomException(EXISTS_USERNAME);
         }
 
         String newUserName = request.getUsername();
@@ -103,24 +86,18 @@ public class UserService {
 
         User updatedUser = foundUser.update(newUserName, newEmail, newName);
 
-        UserUpdateResponse response = UserUpdateResponse.from(updatedUser);
-
-        return new CommonResponse<>(true, "사용자 정보가 수정되었습니다.", response);
+        return UserUpdateResponse.from(updatedUser);
     }
 
     // 사용자 탈퇴
     @Transactional
-    public CommonResponse<Void> delete(Long id) {
+    public void delete(Long id) {
 
         log.info("User Service - delete");
 
         User foundUser = userRepository.findByIdAndIsDeletedFalse(id)
-                .orElseThrow(() -> new RuntimeException("없는 사용자입니다."));
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER));
 
-        foundUser.softDelete();
-
-        return new CommonResponse<>(true, "회원 탈퇴되었습니다.", null);
+        foundUser.softDelete(true);
     }
-
-
 }

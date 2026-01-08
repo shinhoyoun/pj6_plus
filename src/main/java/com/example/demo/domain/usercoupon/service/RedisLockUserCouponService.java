@@ -1,10 +1,14 @@
 package com.example.demo.domain.usercoupon.service;
 
-import com.example.demo.common.redis.RedisLockService;
+import com.example.demo.common.exception.CustomException;
+import com.example.demo.common.redis.service.RedisLockService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static com.example.demo.common.enums.ErrorMessage.CLIENT_CLOSED_REQUEST;
+import static com.example.demo.common.enums.ErrorMessage.FAILED_LOCK;
 
 @Service
 @RequiredArgsConstructor
@@ -21,14 +25,14 @@ public class RedisLockUserCouponService {
         String uuidStr = uuid.toString();
 
         if (!redisLockService.tryLock(lockKey, uuidStr, 5)) {
-            throw new RuntimeException("잠시후 다시 시도해주세요");
+            throw new CustomException(FAILED_LOCK);
         }
 
         try{
             Thread.sleep(3000);
             userCouponService.issuedCouponWithLock(couponId, userId);
         } catch (InterruptedException interruptedException) {
-            throw new RuntimeException("잠시후 다시 시도해주세요");
+            throw new CustomException(CLIENT_CLOSED_REQUEST);
         } finally{
             redisLockService.unlock(lockKey, uuidStr);
         }

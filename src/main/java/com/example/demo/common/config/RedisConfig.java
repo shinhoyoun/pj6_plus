@@ -10,9 +10,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
-
 import java.io.IOException;
-import java.time.Duration;
 
 @Configuration
 public class RedisConfig {

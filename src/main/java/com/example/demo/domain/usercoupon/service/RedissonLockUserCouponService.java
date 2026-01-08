@@ -1,5 +1,6 @@
 package com.example.demo.domain.usercoupon.service;
 
+import com.example.demo.common.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -7,6 +8,9 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
+
+import static com.example.demo.common.enums.ErrorMessage.CLIENT_CLOSED_REQUEST;
+import static com.example.demo.common.enums.ErrorMessage.FAILED_LOCK;
 
 
 @Service
@@ -37,11 +41,11 @@ public class RedissonLockUserCouponService {
                 }
             } else {
                 log.warn("락 획득 실패 - look:coupon:{}, user {}", couponId, userId);
-                throw new RuntimeException("잠시만 기다려주세요");
+                throw new CustomException(FAILED_LOCK);
             }
         } catch (InterruptedException interruptedException) {
             log.error("인터럽트 발생 {}", interruptedException.getMessage());
-            throw new RuntimeException("프로세스를 강제 종료합니다.");
+            throw new CustomException(CLIENT_CLOSED_REQUEST);
         }
     }
 }

@@ -1,14 +1,9 @@
 package com.example.demo.domain.user.entity;
 
 import com.example.demo.common.entity.BaseEntity;
-import com.example.demo.domain.user.dto.request.UserUpdateRequest;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.cglib.core.Local;
+
 
 import java.time.LocalDateTime;
 
@@ -22,10 +17,9 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
     @Column(name = "email", unique = true, nullable = false)
@@ -37,10 +31,8 @@ public class User extends BaseEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    private String role;
-
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
@@ -60,7 +52,8 @@ public class User extends BaseEntity {
         return this;
     }
 
-    public void softDelete() {
+    public void softDelete(boolean isDeleted) {
+        this.isDeleted = isDeleted;
         this.deletedAt = LocalDateTime.now();
     }
 
