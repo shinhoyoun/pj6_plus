@@ -147,24 +147,24 @@ public class StoreUploadService {
             for (JsonNode itemNode : rowNode) {
                 Store store = Store.builder()
                         .companyName(itemNode.path("COMPANY").asText(null))
-                        .mallName(itemNode.path("SHOP_NAME").asText(null))       // shopName -> mallName
+                        .mallName(itemNode.path("SHOP_NAME").asText(null))
                         .domainName(itemNode.path("DOMAIN_NAME").asText(null))
                         .phoneNumber(itemNode.path("TEL").asText(null))
                         .email(itemNode.path("EMAIL").asText(null))
-                        .salesRegNo(itemNode.path("UPJONG_NBR").asText(null))    // salesRegistrationNumber -> salesRegNo
+                        .salesRegNo(itemNode.path("UPJONG_NBR").asText(null))
                         .businessType(itemNode.path("YPFORM").asText(null))
                         .address(itemNode.path("COM_ADDR").asText(null))
-                        .status(itemNode.path("STAT_NM").asText(null))           // statusCode/status 중 '상태명' 매핑
+                        .status(itemNode.path("STAT_NM").asText(null))
                         .totalRating(itemNode.path("TOT_RATINGPOINT").asInt(0))
-                        .bizInfoRating(itemNode.path("CHOGI_RATINGPOINT").asInt(0))      // businessInfoRating -> bizInfoRating
+                        .bizInfoRating(itemNode.path("CHOGI_RATINGPOINT").asInt(0))
                         .withdrawalRating(itemNode.path("CHUNG_RATINGPOINT").asInt(0))
-                        .paymentRating(itemNode.path("DEAL_RATINGPOINT").asInt(0))       // paymentMethodRating -> paymentRating
+                        .paymentRating(itemNode.path("DEAL_RATINGPOINT").asInt(0))
                         .termsRating(itemNode.path("PYOJUN_RATINGPOINT").asInt(0))
-                        .privacyRating(itemNode.path("SECURITY_RATINGPOINT").asInt(0))   // privacySecurityRating -> privacyRating
+                        .privacyRating(itemNode.path("SECURITY_RATINGPOINT").asInt(0))
                         .mainItem(itemNode.path("SERVICE").asText(null))
                         .withdrawalPossibility(itemNode.path("CHUNG").asText(null))
                         .initialScreenInfo(itemNode.path("CHOGI").asText(null))
-                        .paymentMethod(itemNode.path("GYULJE").asText(null))             // paymentMethods -> paymentMethod
+                        .paymentMethod(itemNode.path("GYULJE").asText(null))
                         .termsCompliance(itemNode.path("PYOJUN").asText(null))
                         .privacyPolicy(itemNode.path("P_INFO_CARE").asText(null))
                         .requestExtraInfo(itemNode.path("PER_INFO").asText(null))

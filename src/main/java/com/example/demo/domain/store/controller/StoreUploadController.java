@@ -28,16 +28,11 @@ public class StoreUploadController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-        //1.csv 파일을 서버에 전송하기
-        //2.csv 파일을 자바 라이브러리를 이용해 읽을 수 있는 방법
-        //3.엔티티를 통해서 읽을 수 있게 만들기
-
     }
 
     /**
      * API 호출
      */
-    //1.포스트맨으로 url 호출 해보기
     @GetMapping("/collection-openapi")
     public ResponseEntity<String> callStoreApi(
             @RequestParam(value = "start", defaultValue = "1") int start,
