@@ -44,16 +44,23 @@ public class StoreService {
 
         List<Store> storeList = storeRepository.findStores(totalRating, status);
         int counts = storeList.size();
-        List<StoreListResponse.StoreDto> storeDtoList = new ArrayList<>();
-
-        for (Store store : storeList) {
-
-            StoreListResponse.StoreDto storeDto = new StoreListResponse.StoreDto(
-                    store.getTotalRating(),
-                    store.getStatus()
-            );
-            storeDtoList.add(storeDto);
-        }
+//        List<StoreListResponse.StoreDto> storeDtoList = new ArrayList<>();
+//
+//        for (Store store : storeList) {
+//
+//            StoreListResponse.StoreDto storeDto = new StoreListResponse.StoreDto(
+//                    store.getTotalRating(),
+//                    store.getStatus()
+//            );
+//            storeDtoList.add(storeDto);
+//        }
+//        return new StoreListResponse(counts, storeDtoList);
+        List<StoreListResponse.StoreDto> storeDtoList =
+                storeList.stream()
+                        .map(store -> new StoreListResponse.StoreDto(
+                                store.getTotalRating(),
+                                store.getStatus()
+                        )).toList();
         return new StoreListResponse(counts, storeDtoList);
     }
 
