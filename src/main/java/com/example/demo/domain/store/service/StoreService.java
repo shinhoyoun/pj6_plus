@@ -61,10 +61,6 @@ public class StoreService {
     @Transactional(readOnly = true)
     public StorePageResponse getStoresPage(Integer totalRating, String status, Pageable pageable) {
 
-        // 1단계 : 실제 데이터값
-        // 2단계 : 전체 데이터 갯수
-        // 3단계 : Page 객체로 변환
-
         Page<Store> storePage = storeRepository.findStoresPage(totalRating, status, pageable);
 
         List<StorePageResponse.StorePageDto> storeDtoList =

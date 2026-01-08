@@ -40,7 +40,7 @@ public class StoreController {
     }
 
     /**
-     * QueryDSL 리펙토링
+     *
      */
     @GetMapping("/page")
     public ResponseEntity<CommonResponse<StorePageResponse>> getStoresPageApi(
