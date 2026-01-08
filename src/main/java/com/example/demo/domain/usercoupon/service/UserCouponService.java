@@ -1,5 +1,6 @@
 package com.example.demo.domain.usercoupon.service;
 
+import com.example.demo.common.annotation.RedisLock;
 import com.example.demo.domain.coupon.entity.Coupon;
 import com.example.demo.domain.coupon.repository.CouponRepository;
 import com.example.demo.domain.user.entity.User;
@@ -18,7 +19,9 @@ public class UserCouponService {
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
 
+    // aop 적용전 적용후로 나눠 테스트코드 작성
     @Transactional
+    @RedisLock(key = "lock:coupon")
     public IssuedUserCouponResponseDto issuedCouponWithLock(long couponId, long userId) {
         Coupon foundCoupon = couponRepository.findByIdForLOCK(couponId).orElseThrow(
                 () -> new RuntimeException("존재하지 않은 쿠폰입니다.")
