@@ -22,6 +22,14 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
     // QueryDSL 쿼리를 생성해주는 팩토리
     private final JPAQueryFactory queryFactory;
 
+
+
+
+
+
+
+
+
     // boolean expressoin 메서드
     public BooleanExpression mainItemContains(String keyword) {
 
