@@ -53,6 +53,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
+    // redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:4.1.0'
+
+    // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
 }
