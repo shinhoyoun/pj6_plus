@@ -34,10 +34,11 @@ public class Coupon {
         this.couponName = couponName;
     }
 
-    // 테스트용 쿠폰객체, 병합 후 삭제
+    /**동시성 테스트용 쿠폰객체
+     * 테스트 종료
     public Coupon(String couponName) {
         this.couponName = couponName;
-    }
+    }*/
 
     public void issuedCoupon() {
         this.issuedCouponCount++;

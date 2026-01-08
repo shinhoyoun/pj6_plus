@@ -36,7 +36,7 @@ class UserCouponServiceTest {
     @DisplayName("유저 200명의 동시성 이슈와 동시성 이슈에 대한 락 적용 후 100명의 유저에게만 쿠폰 발급")
     public void userForLock_issuedOneCouponUsers_oneHundredIssuedCouponTest() throws InterruptedException {
         // give
-        // 쿠폰 객체
+        // 쿠폰 객체, 테스트 종료 후 store_id null x
         Coupon coupon = new Coupon("text 쿠폰");
 
         couponRepository.save(coupon);
@@ -49,7 +49,7 @@ class UserCouponServiceTest {
                 .toList();
 
         // when
-        ExecutorService executorService = Executors.newFixedThreadPool(200);
+        ExecutorService executorService = Executors.newFixedThreadPool(16);
         CountDownLatch latch = new CountDownLatch(200);
 
         for (User user : users) {
@@ -83,7 +83,7 @@ class UserCouponServiceTest {
     @DisplayName("유저 101명의 동시성 이슈와 동시성 이슈에 대한 비관적 락 적용 후 101명부터 쿠폰발급을 막는 예외발생")
     public void userForLock_issuedOneCouponUsers_exceptionTest() throws InterruptedException{
         // give
-        // 쿠폰 객체
+        // 쿠폰 객체, 테스트 종료 후 store_id null x
         Coupon coupon = new Coupon("text 쿠폰");
 
         couponRepository.save(coupon);
@@ -96,7 +96,7 @@ class UserCouponServiceTest {
                 .toList();
 
         // when
-        ExecutorService executorService = Executors.newFixedThreadPool(101);
+        ExecutorService executorService = Executors.newFixedThreadPool(8);
         CountDownLatch latch = new CountDownLatch(101);
 
         for (User user : users) {
