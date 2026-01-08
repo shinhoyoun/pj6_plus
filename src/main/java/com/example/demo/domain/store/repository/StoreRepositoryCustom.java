@@ -23,4 +23,8 @@ public interface StoreRepositoryCustom {
      */
     Page<Store> findByMainItem(String keyword, Pageable pageable);
 
+
+
+
+
 }

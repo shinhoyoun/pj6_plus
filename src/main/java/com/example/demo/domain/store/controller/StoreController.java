@@ -40,7 +40,7 @@ public class StoreController {
     }
 
     /**
-     * 전체평가 필터조회, 업체상태 필터조회 + 페이징 기능추가
+     * QueryDSL 리펙토링
      */
     @GetMapping("/page")
     public ResponseEntity<CommonResponse<StorePageResponse>> getStoresPageApi(
