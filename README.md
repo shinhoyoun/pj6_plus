@@ -103,6 +103,13 @@
     ``` if(keyword == null || keyword.trim().isEmpty()) {return null;}```
     * 코드에서 trim 부분 전부 삭제 후 해결
 
+### 2. JPAQueryFactory 등록 부재 이슈 해결
+* **문제:** Parameter 0 of constructor in com.example.demo.domain.store.repository.StoreRepositoryImpl required a bean of type 'com.querydsl.jpa.impl.JPAQueryFactory' that could not be found. - 에러발생 : Spring이 생성자 주입을 하려는데, 필요한 Bean이 IoC 컨테이너에 없어서 실패
+* **해결:**
+    * QueryDSL을 사용할 때 JPAQueryFactory는 Spring이 자동으로 Bean 등록하지 않는다.
+    * EntityManager은 Spring Boot가 자동으로 Bean등록✅ BUT, JPAQueryFactory는 QueryDSL 라이브러리 객체라 자동 등록 ❌
+    * JPAQueryFactory 타입의 Bean을 직접 설정 클래스에서 등록
+
 ### 2. 동시성 이슈 해결 (Redis Lock)
 * **문제:** 테스트 코드를 통해 동시에 100명의 사용자가 요청 시, 갱신 손실(Lost Update) 발생 확인.
 * **해결:**
