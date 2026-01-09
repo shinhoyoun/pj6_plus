@@ -14,9 +14,12 @@ import java.io.IOException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import java.io.IOException;
 
 @Configuration
 public class RedisConfig {
+
 
     // 래디슨 커넥션
     @Bean
@@ -61,6 +64,5 @@ public class RedisConfig {
 
         template.afterPropertiesSet();
         return template;
-    }
-
+}
 }
