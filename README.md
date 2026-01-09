@@ -84,7 +84,22 @@
 
 ## 📈 트러블 슈팅 & 성능 최적화
 
-### 1. 검색어 기록 시 공백 이슈
+### 1. JPAQueryFactory 등록 부재 이슈 해결
+* **문제:** Parameter 0 of constructor in com.example.demo.domain.store.repository.StoreRepositoryImpl required a bean of type 'com.querydsl.jpa.impl.JPAQueryFactory' that could not be found. - 에러발생 : Spring이 생성자 주입을 하려는데, 필요한 Bean이 IoC 컨테이너에 없어서 실패
+* **해결:**
+    * QueryDSL을 사용할 때 JPAQueryFactory는 Spring이 자동으로 Bean 등록하지 않는다.
+    * EntityManager은 Spring Boot가 자동으로 Bean등록✅ BUT, JPAQueryFactory는 QueryDSL 라이브러리 객체라 자동 등록 ❌
+    * JPAQueryFactory 타입의 Bean을 직접 설정 클래스에서 등록
+
+### 2. 동시성 이슈 해결 (Redis Lock)
+* **문제:** 테스트 코드를 통해 동시에 100명의 사용자가 요청 시, 갱신 손실(Lost Update) 발생 확인.
+* **해결:**
+    * Java `synchronized`는 다중 서버에서 동작하지 않음을 확인.
+    * Redis의 `Pub/Sub` 기반인 **Redisson** 라이브러리를 도입하여 분산 락 구현.
+    * AOP를 적용하여 락 획득/해제 코드를 비즈니스 로직에서 분리하여 가독성 확보.
+* **결과:** 1,000건의 동시 요청 테스트 시 **데이터 오차 0건** 달성.
+
+### 3. 검색어 기록 시 공백 이슈
 
 <img width="218" height="155" alt="스크린샷 2026-01-08 오전 9 55 49" src="https://github.com/user-attachments/assets/780dcd10-a1d1-4156-ada3-813a68805c00" />
 
@@ -103,20 +118,30 @@
     ``` if(keyword == null || keyword.trim().isEmpty()) {return null;}```
     * 코드에서 trim 부분 전부 삭제 후 해결
 
-### 2. JPAQueryFactory 등록 부재 이슈 해결
-* **문제:** Parameter 0 of constructor in com.example.demo.domain.store.repository.StoreRepositoryImpl required a bean of type 'com.querydsl.jpa.impl.JPAQueryFactory' that could not be found. - 에러발생 : Spring이 생성자 주입을 하려는데, 필요한 Bean이 IoC 컨테이너에 없어서 실패
-* **해결:**
-    * QueryDSL을 사용할 때 JPAQueryFactory는 Spring이 자동으로 Bean 등록하지 않는다.
-    * EntityManager은 Spring Boot가 자동으로 Bean등록✅ BUT, JPAQueryFactory는 QueryDSL 라이브러리 객체라 자동 등록 ❌
-    * JPAQueryFactory 타입의 Bean을 직접 설정 클래스에서 등록
+### 4. 변경 사항을 문서화 및 설계 방향 이슈
 
-### 3. 동시성 이슈 해결 (Redis Lock)
-* **문제:** 테스트 코드를 통해 동시에 100명의 사용자가 요청 시, 갱신 손실(Lost Update) 발생 확인.
-* **해결:**
-    * Java `synchronized`는 다중 서버에서 동작하지 않음을 확인.
-    * Redis의 `Pub/Sub` 기반인 **Redisson** 라이브러리를 도입하여 분산 락 구현.
-    * AOP를 적용하여 락 획득/해제 코드를 비즈니스 로직에서 분리하여 가독성 확보.
-* **결과:** 1,000건의 동시 요청 테스트 시 **데이터 오차 0건** 달성.
+** 문제 ** 
+프로젝트 진행 중 요구사항 및 기능 변경이 발생했을 때, 변경 내용을 구두로만 공유한 뒤 바로 개발을 진행한 부분 
+
+그 결과,  API 명세, ERD, 기능 흐름 등 명확한 목적 없이 진행
+최종 구현 결과가 초기 목표와 조금은 다른 방향으로 진행되는 문제가 발생
+
+**원인**	
+문서 최신화: 변경된 요구사항이 API/ERD에 늦게 반영
+소통오류: 같이 맡은 파트 팀원마다 변경 내용을 다르게 이해
+검증 불가: 구현 결과가 요구사항과 일치하는지 판단 및 수정 시 많은 시간 소요
+
+앞으로는 변경 사항 발생 시 다음 프로세스를 적용하도록 개선하여야겠다.
+
+**해결**
+1. 요구사항 변경 내용 문서화
+2. API 명세서, ERD 작성 및 수정 후 소통 
+3. 기능 흐름도 또는 시퀀스 정리 -> 단계별 접근하기
+4. 이후 개발 착수
+
+**배운 점**
+설계 문서와 소통한 부분을 기록하여 문서화 해야되는 것을 알게됨
+설계 문서는 개발의 방향성을 확이하는 기준이기에 명확하게 하기
 
 ---
 
