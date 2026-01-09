@@ -84,7 +84,7 @@
 
 ## 📈 트러블 슈팅 & 성능 최적화
 
-### 검색어 기록 시 공백 이슈
+### 1. 검색어 기록 시 공백 이슈
 
 <img width="218" height="155" alt="스크린샷 2026-01-08 오전 9 55 49" src="https://github.com/user-attachments/assets/780dcd10-a1d1-4156-ada3-813a68805c00" />
 
@@ -110,7 +110,7 @@
     * EntityManager은 Spring Boot가 자동으로 Bean등록✅ BUT, JPAQueryFactory는 QueryDSL 라이브러리 객체라 자동 등록 ❌
     * JPAQueryFactory 타입의 Bean을 직접 설정 클래스에서 등록
 
-### 2. 동시성 이슈 해결 (Redis Lock)
+### 3. 동시성 이슈 해결 (Redis Lock)
 * **문제:** 테스트 코드를 통해 동시에 100명의 사용자가 요청 시, 갱신 손실(Lost Update) 발생 확인.
 * **해결:**
     * Java `synchronized`는 다중 서버에서 동작하지 않음을 확인.
