@@ -1,6 +1,5 @@
 package com.example.demo.domain.user.controller;
-
-import com.example.demo.common.response.CommonResponse;
+import com.example.demo.common.response.GlobalResponse;
 import com.example.demo.domain.user.dto.request.UserCreateRequest;
 import com.example.demo.domain.user.dto.request.UserUpdateRequest;
 import com.example.demo.domain.user.dto.response.UserCreateResponse;
@@ -17,63 +16,61 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.example.demo.common.enums.SuccessMessage.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 @Slf4j
 public class UserController {
 
-//    Long loginUserId =
-//            (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     private final UserService userService;
 
-    // 회원가입
     @PostMapping()
-    public ResponseEntity<CommonResponse<UserCreateResponse>> createUser(@RequestBody @Valid UserCreateRequest request) {
+    public ResponseEntity<GlobalResponse<UserCreateResponse>> createUser(@RequestBody @Valid UserCreateRequest request) {
 
         log.info("UserController - 회원가입 요청 들어옴");
 
-        CommonResponse<UserCreateResponse> response = userService.create(request);
+        UserCreateResponse result = userService.create(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(GlobalResponse.success(USER_SIGNUP_SUCCESS, result));
     }
 
-    // 사용자 정보 상세 조회 (단건)
     @GetMapping("/{id}")
-    public ResponseEntity<CommonResponse<UserGetOneDetailResponse>> getOneDetail(@PathVariable Long id) {
+    public ResponseEntity<GlobalResponse<UserGetOneDetailResponse>> getOneDetail(@PathVariable Long id) {
 
-        CommonResponse<UserGetOneDetailResponse> response = userService.getOneDetail(id);
+        UserGetOneDetailResponse result = userService.getOneDetail(id);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(GlobalResponse.success(USER_INFO_SUCCESS, result));
     }
 
-    // 사용자 목록 조회
     @GetMapping
-    public ResponseEntity<CommonResponse<List<UserGetListResponse>>> getList() {
+    public ResponseEntity<GlobalResponse<List<UserGetListResponse>>> getList() {
 
-        CommonResponse<List<UserGetListResponse>> response = userService.getList();
+        List<UserGetListResponse> result = userService.getList();
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(GlobalResponse.success(USER_INFO_SUCCESS, result));
     }
 
     // 사용자 정보 수정
     @PutMapping("/{id}")
-    public ResponseEntity<CommonResponse<UserUpdateResponse>> updateUser(@PathVariable Long id,
-                                                                         @RequestBody @Valid UserUpdateRequest request
+    public ResponseEntity<GlobalResponse<UserUpdateResponse>> updateUser(
+            @PathVariable Long id,
+            @RequestBody @Valid UserUpdateRequest request
     ) {
-        CommonResponse<UserUpdateResponse> response = userService.update(id ,request);
+        UserUpdateResponse result = userService.update(id ,request);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(GlobalResponse.success(USER_UPDATE_SUCCESS, result));
     }
 
 
     // 회원 탈퇴
     @DeleteMapping("/{id}")
-    public ResponseEntity<CommonResponse<Void>> delete(@PathVariable Long id) {
+    public ResponseEntity<GlobalResponse<Void>> delete(@PathVariable Long id) {
 
-        CommonResponse<Void> response = userService.delete(id);
+        userService.delete(id);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(GlobalResponse.successNodata(USER_DELETE_SUCCESS));
     }
 
 }

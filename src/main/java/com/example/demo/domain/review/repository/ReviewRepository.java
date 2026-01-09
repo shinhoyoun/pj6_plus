@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    Optional<Review> findByReviewIdAndIsDeletedFalse(Long isDeleted);
+    Optional<Review> findByIdAndIsDeletedFalse(Long id);
 
-    List<Review> findAllByAndIsDeletedFalse();
+    List<Review> findAllAndIsDeletedFalse();
 }

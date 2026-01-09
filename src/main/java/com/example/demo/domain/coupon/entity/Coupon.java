@@ -1,15 +1,18 @@
 package com.example.demo.domain.coupon.entity;
-
+;
+import com.example.demo.common.exception.CustomException;
 import com.example.demo.domain.store.entity.Store;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import static com.example.demo.common.enums.ErrorMessage.COUPON_OUT_OF_STOCK;
 
 @Entity
 @Table(name = "coupons")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Coupon {
 
     @Id
@@ -20,32 +23,22 @@ public class Coupon {
     @JoinColumn(name = "stores_id", nullable = false)
     private Store store;
 
-    @Column(name = "coupon_name")
+    @Column(name = "coupon_name", nullable = false)
     private String couponName;
 
     @Column(name = "issued_coupon_count")
-    private long issuedCouponCount;
+    private long issuedCouponCount = 0;
 
     @Column(name = "total_coupon_count")
     private final long totalCouponCount = 100;
-
-    public Coupon(Store store, String couponName) {
-        this.store = store;
-        this.couponName = couponName;
-    }
-
-    // 테스트용 쿠폰객체, 병합 후 삭제
-    public Coupon(String couponName) {
-        this.couponName = couponName;
-    }
 
     public void issuedCoupon() {
         this.issuedCouponCount++;
     }
 
     public void notIssuedCoupon() {
-        if(this.issuedCouponCount > this.totalCouponCount) {
-            throw new RuntimeException("더이상 발급되지 않는 쿠폰입니다");
+        if (this.issuedCouponCount > this.totalCouponCount) {
+            throw new CustomException(COUPON_OUT_OF_STOCK);
         }
     }
 }

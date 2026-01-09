@@ -42,4 +42,5 @@ public interface StoreRepository extends JpaRepository<Store, Long> , StoreRepos
             Pageable pageable
     );
 
+    boolean existsByCompanyName(String companyName);
 }

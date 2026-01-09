@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "searchs")
+@Table(name = "search")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -22,6 +22,4 @@ public class Search {
     private String keyword;
     private LocalDateTime searchDate;
     private Long count;
-
-
 }
