@@ -2,7 +2,6 @@ package com.example.demo.domain.usercoupon.dto.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @RequiredArgsConstructor

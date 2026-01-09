@@ -59,7 +59,8 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<GetAllReviewResponseDto> foundAll() {
 
-        List<Review> foundAllReview = reviewRepository.findAllAndIsDeletedFalse();
+//        List<Review> foundAllReview = reviewRepository.findAllAndIsDeletedFalse();
+        List<Review> foundAllReview = reviewRepository.findAllByIsDeletedFalse();
 
        List<GetAllReviewResponseDto> reviewList = foundAllReview.stream()
                .map(GetAllReviewResponseDto :: from)

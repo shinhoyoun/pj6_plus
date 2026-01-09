@@ -1,12 +1,10 @@
 package com.example.demo.domain.user.dto.response;
 
 import com.example.demo.domain.user.entity.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 @Getter
 @RequiredArgsConstructor

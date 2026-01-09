@@ -1,5 +1,5 @@
 package com.example.demo.domain.coupon.entity;
-;
+
 import com.example.demo.common.exception.CustomException;
 import com.example.demo.domain.store.entity.Store;
 import jakarta.persistence.*;

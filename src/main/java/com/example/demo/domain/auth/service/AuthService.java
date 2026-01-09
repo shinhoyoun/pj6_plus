@@ -35,7 +35,7 @@ public class AuthService {
 
         //2. 회원 조회 - 받은 email로 로 비밀번호 검증
         User foundUser = authRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException());
+                .orElseThrow(() -> new RuntimeException("email 중복"));
 
         //3. 비밀번호 검증 - 받아온 비밀번호와 기존 비밀번호 일치화
         String encodedPassword = foundUser.getPassword();

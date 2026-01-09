@@ -1,6 +1,5 @@
 package com.example.demo.domain.store.service;
 
-import com.example.demo.common.util.cache_v2.SearchKeywordCacheManager;
 import com.example.demo.domain.search.service.CacheService;
 import com.example.demo.domain.store.entity.Store;
 import com.example.demo.domain.store.repository.StoreRepository;

@@ -9,4 +9,7 @@ public class JwtUserPayload {
 
     private Long userId;
     private String userEmail;
+
+    public JwtUserPayload(Long id, String email) {
+    }
 }
