@@ -113,8 +113,10 @@
 
 ---
 
-## 💻 설치 및 실행 방법
+## 💻 설치 및 실행 방법 ,csv파일 첨부
 
 1. **Repository Clone**
    ```bash
    git clone [https://github.com/shinhoyoun/pj6_plus.git](https://github.com/shinhoyoun/pj6_plus.git)
+
+https://drive.google.com/file/d/1_nGMA09XmYfG-extIA5bKP1gqT2WoZPv/view?usp=sharing
